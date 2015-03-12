@@ -211,6 +211,7 @@ namespace Viseo.WiiWars.ViewModel
 
 			Devices = _videoDevices.Cast<FilterInfo>().ToList();
 			SelectedDevice = Devices.First();
+			StartStopVideoFeed();
 		}
 
 		private void InitializeWiimoteList()
