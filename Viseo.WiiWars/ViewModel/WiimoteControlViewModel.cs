@@ -434,6 +434,13 @@ namespace Viseo.WiiWars.ViewModel
             new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Orange) }
 		};
 
+			
+		public ICollection<IRPlotViewModel> IRPlots
+		{
+			get { return _irPlots; }
+		}
+
+
 		#endregion //Properties
 
 		public WiimoteControlViewModel(Wiimote wm)

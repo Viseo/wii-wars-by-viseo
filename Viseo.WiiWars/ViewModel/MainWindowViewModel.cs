@@ -3,6 +3,7 @@ using AForge.Video.DirectShow;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -246,9 +247,21 @@ namespace Viseo.WiiWars.ViewModel
 				var saber = new LightSaber(wm);
 
 				AugmentedRealityObjects.Add(saber);
+
+				//wm.WiimoteChanged += Wm_WiimoteChanged;
 			}
 
 		}
+
+		private EventHub.EventHubSender Sender { get; set; }
+
+		private void Wm_WiimoteChanged(object sender, WiimoteChangedEventArgs e)
+		{
+			if (Sender == null)
+				Sender = new EventHub.EventHubSender(ConfigurationManager.AppSettings["EventHub.Namespace"]);
+
+			Sender.Send(e.WiimoteState, ((Wiimote)sender).ID.ToString());
+        }
 
 		public void Dispose()
 		{
