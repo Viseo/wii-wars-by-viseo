@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.22609.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viseo.WiiWars", "Viseo.WiiWars\Viseo.WiiWars.csproj", "{5B918BEB-F551-4F21-9E0B-47B6AA364CBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viseo.WiiWars.POC", "Viseo.WiiWars\Viseo.WiiWars.POC.csproj", "{5B918BEB-F551-4F21-9E0B-47B6AA364CBC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viseo.WiiWars.WiimoteInSpace", "Viseo.WiiWars.WiimoteInSpace\Viseo.WiiWars.WiimoteInSpace.csproj", "{8095E2BF-8799-4170-9EA0-18E561FF6EF7}"
 EndProject
