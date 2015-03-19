@@ -10,6 +10,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using WiimoteLib;
 using OpenCvSharp.CPlusPlus;
+using Viseo.WiiWars.WiimoteInSpace.Helper;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
@@ -64,6 +65,10 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
 		public MainWindowViewModel()
 		{
+			testSolvePnP();
+
+			return;
+
 			dispatcher = Dispatcher.CurrentDispatcher;
 
 			InitializeWiimote();
@@ -116,17 +121,71 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 		{
 			var sensors = e.WiimoteState.IRState.IRSensors;
 
-			//if (sensors.All(s => s.Found == true))
-			//{
-			//	var objectPoints = new List<Point3f>();
-			//	var imagePoints = new List<Point2f>();
-			//	var intrinsic = new double[3,3];
-			//	var distCoeffs = new List<double>();
-   //             OutputArray<double> rvec, tvec;
-			//	Cv2.SolvePnP(objectPoints, imagePoints, intrinsic, distCoeffs, rvec, tvec);
+			if (sensors.All(s => s.Found == true))
+			{
+				double[] rvec, tvec;
+				var objectPoints = _ledPositions.ToPoint3f().ToArray();
+				var imagePoints = sensors.Select(s => s.RawPosition).ToPoint2f().ToArray();
+				var intrinsic = new double[3, 3] { { _fx, 0, _cx }, { 0, _fy, _cy }, { 0, 0, 1 } };
 
-			//}
+				Cv2.SolvePnP(objectPoints, //led absolute position
+							 imagePoints, //positions from camera
+							 intrinsic,
+							 null, out rvec, out tvec);
+			}
 
+		}
+
+		private void testSolvePnP()
+		{
+			double[] rvec, tvec;
+
+			//var objectPoints = _ledPositions.ToPoint3f().ToArray();
+			//var imagePoints = sensors.Select(s => s.RawPosition).ToPoint2f().ToArray();
+			var intrinsic = new double[3, 3] { { _fx, 0, _cx }, { 0, _fy, _cy }, { 0, 0, 1 } };
+			//var rvec = new double[3];
+			//var tvec = new double[3];
+
+			var objectPoints = new OpenCvSharp.CPlusPlus.Point3f[4]
+			{
+					new Point3f(2.5f, 0.5f, 1.5f),
+					new Point3f(2.5f, 0.5f, -1f),
+					new Point3f(3.5f, 0.5f, -2.5f),
+					new Point3f(-3.5f, 0.5f, -2.5f)
+			};
+
+			var imagePoints = new OpenCvSharp.CPlusPlus.Point2f[4]
+			{
+					new Point2f(297, 369),
+					new Point2f(294, 198),
+					new Point2f(195, 106),
+					new Point2f(746, 44)
+			};
+
+			//var iaObjectPoints = InputArray.Create<Point3f>(objectPoints);
+			//var iaImagePoints = InputArray.Create<Point2f>(imagePoints);
+			//var iaIntrinsic = InputArray.Create<double>(intrinsic);
+			//var oaRvec = OutputArray.Create<double>(new List<double>());
+			//var oaTvec = OutputArray.Create<double>(new List<double>());
+			//var iaDistCoeff = InputArray.Create(new Mat());
+
+			Cv2.SolvePnP(objectPoints, //led absolute position
+						 imagePoints, //positions from camera
+						 intrinsic,
+						 null, out rvec, out tvec, false, SolvePnPFlag.EPNP);
+
+			//Cv2.SolvePnP(iaObjectPoints, iaImagePoints, iaIntrinsic, iaDistCoeff, oaRvec, oaTvec);
+			//NativeMethods.calib3d_solvePnP_vector(objectPoints.ToArray(),
+			//									  objectPoints.Length,
+			//									  imagePoints,
+			//									  imagePoints.Length,
+			//									  intrinsic,
+			//									  new double[0],
+			//									  0,
+			//									  rvec,
+			//									  tvec,
+			//									  0,
+			//									  (int)SolvePnPFlag.Iterative);
 		}
 
 		private void InitializeIRBeaconModel()
