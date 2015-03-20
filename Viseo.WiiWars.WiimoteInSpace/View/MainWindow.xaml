@@ -8,17 +8,21 @@
 		xmlns:b="clr-namespace:Viseo.WiiWars.WiimoteInSpace.Behaviors"
 		xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="400">
+        Title="MainWindow" Height="400" Width="600">
 	<Window.DataContext>
 		<wm:MainWindowViewModel />
 	</Window.DataContext>
 	
 	<Grid Name="Container">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 		<HelixToolkit:HelixViewport3D ShowFrameRate="True" 
                            InfiniteSpin="true" 
                            IsHeadLightEnabled="True"
                            InfoBackground="Transparent"
-                           InfoForeground="White"
+                           InfoForeground="Black"
                            ShowCoordinateSystem="True"
                            CoordinateSystemLabelForeground="White"
                            CoordinateSystemLabelX="x"
@@ -26,10 +30,62 @@
                            CoordinateSystemLabelZ="z"
                            TextBrush="White">
             <HelixToolkit:SunLight/>
-            <!--<ModelVisual3D Content="{Binding Wiimote}"/>-->
+            <ModelVisual3D Content="{Binding Wiimote}">
+                <ModelVisual3D.Transform>
+                    <Transform3DGroup>
+                        <Transform3DGroup.Children>
+                            <RotateTransform3D>
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="1,0,0" Angle="{Binding RotX}" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <RotateTransform3D>
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="0,1,0" Angle="{Binding RotY}" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <RotateTransform3D>
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="0,0,1" Angle="{Binding RotZ}" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <TranslateTransform3D OffsetX="{Binding TranslateX}" OffsetY="{Binding TranslateY}" OffsetZ="{Binding TranslateZ}" />
+                        </Transform3DGroup.Children>
+                    </Transform3DGroup>
+                </ModelVisual3D.Transform>
+            </ModelVisual3D>
             <!--<ModelVisual3D Content="{Binding LightSaber}"/>-->
 			<ModelVisual3D Content="{Binding IRBeacon}"/>
 			<HelixToolkit:GridLinesVisual3D />
 		</HelixToolkit:HelixViewport3D>
+        <StackPanel Grid.Column="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="TranslateX = " Grid.Row="0" Grid.Column="0" />
+                <TextBlock Text="TranslateY = " Grid.Row="1" Grid.Column="0" />
+                <TextBlock Text="TranslateZ = " Grid.Row="2" Grid.Column="0" />
+                <TextBlock Text="RotX = " Grid.Row="3" Grid.Column="0" />
+                <TextBlock Text="RotY = " Grid.Row="4" Grid.Column="0" />
+                <TextBlock Text="RotZ = " Grid.Row="5" Grid.Column="0" />
+                <TextBlock Text="{Binding TranslateX}" Grid.Row="0" Grid.Column="1" />
+                <TextBlock Text="{Binding TranslateY}" Grid.Row="1" Grid.Column="1" />
+                <TextBlock Text="{Binding TranslateZ}" Grid.Row="2" Grid.Column="1" />
+                <TextBlock Text="{Binding RotX}" Grid.Row="3" Grid.Column="1" />
+                <TextBlock Text="{Binding RotY}" Grid.Row="4" Grid.Column="1" />
+                <TextBlock Text="{Binding RotZ}" Grid.Row="5" Grid.Column="1" />
+            </Grid>
+            
+        </StackPanel>
 	</Grid>
 </Window>

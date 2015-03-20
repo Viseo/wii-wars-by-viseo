@@ -16,7 +16,8 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
 	public class MainWindowViewModel : ViewModelBase
 	{
-		private readonly Dispatcher dispatcher;
+        #region Properties
+        private readonly Dispatcher dispatcher;
 
 		private Model3D _wiimote;
 
@@ -63,12 +64,83 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 			new Point3D(-3.5, 0.5, -2.5)
 		};
 
-		public MainWindowViewModel()
+        private double _translateX;
+
+        public double TranslateX
+        {
+            get { return _translateX; }
+            set
+            {
+                _translateX = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _translateY;
+
+        public double TranslateY
+        {
+            get { return _translateY; }
+            set
+            {
+                _translateY = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _translateZ;
+
+        public double TranslateZ
+        {
+            get { return _translateZ; }
+            set
+            {
+                _translateZ = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _rotX;
+
+        public double RotX
+        {
+            get { return _rotX; }
+            set
+            {
+                _rotX = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _rotY;
+
+        public double RotY
+        {
+            get { return _rotY; }
+            set
+            {
+                _rotY = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _rotZ;
+
+        public double RotZ
+        {
+            get { return _rotZ; }
+            set
+            {
+                _rotZ = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        #endregion
+
+        public MainWindowViewModel()
 		{
-			testSolvePnP();
-
-			return;
-
 			dispatcher = Dispatcher.CurrentDispatcher;
 
 			InitializeWiimote();
@@ -123,69 +195,30 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
 			if (sensors.All(s => s.Found == true))
 			{
-				double[] rvec, tvec;
-				var objectPoints = _ledPositions.ToPoint3f().ToArray();
-				var imagePoints = sensors.Select(s => s.RawPosition).ToPoint2f().ToArray();
-				var intrinsic = new double[3, 3] { { _fx, 0, _cx }, { 0, _fy, _cy }, { 0, 0, 1 } };
+                var rvec = new MatOfDouble(1, 3);
+                var tvec = new MatOfDouble(1, 3);
+                var objectPoints = InputArray.Create(_ledPositions.ToPoint3f().ToArray());
+				var imagePoints = InputArray.Create(sensors.Select(s => s.RawPosition).ToPoint2f().ToArray());
+				var intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
 
-				Cv2.SolvePnP(objectPoints, //led absolute position
+                Cv2.SolvePnP(objectPoints, //led absolute position
 							 imagePoints, //positions from camera
 							 intrinsic,
-							 null, out rvec, out tvec);
-			}
+                             InputArray.Create(new Mat()), rvec, tvec);
 
-		}
+                var rvecIdxer = rvec.GetIndexer();
+                var tvecIdxer = tvec.GetIndexer();
 
-		private void testSolvePnP()
-		{
-			double[] rvec, tvec;
+                TranslateX = tvecIdxer[0];
+                TranslateY = tvecIdxer[1];
+                TranslateZ = tvecIdxer[2];
 
-			//var objectPoints = _ledPositions.ToPoint3f().ToArray();
-			//var imagePoints = sensors.Select(s => s.RawPosition).ToPoint2f().ToArray();
-			var intrinsic = new double[3, 3] { { _fx, 0, _cx }, { 0, _fy, _cy }, { 0, 0, 1 } };
-			//var rvec = new double[3];
-			//var tvec = new double[3];
+                RotX = rvecIdxer[0] * (180/Math.PI);
+                RotY = rvecIdxer[1] * (180 / Math.PI);
+                RotZ = rvecIdxer[2] * (180 / Math.PI);
 
-			var objectPoints = new OpenCvSharp.CPlusPlus.Point3f[4]
-			{
-					new Point3f(2.5f, 0.5f, 1.5f),
-					new Point3f(2.5f, 0.5f, -1f),
-					new Point3f(3.5f, 0.5f, -2.5f),
-					new Point3f(-3.5f, 0.5f, -2.5f)
-			};
+            }
 
-			var imagePoints = new OpenCvSharp.CPlusPlus.Point2f[4]
-			{
-					new Point2f(297, 369),
-					new Point2f(294, 198),
-					new Point2f(195, 106),
-					new Point2f(746, 44)
-			};
-
-			//var iaObjectPoints = InputArray.Create<Point3f>(objectPoints);
-			//var iaImagePoints = InputArray.Create<Point2f>(imagePoints);
-			//var iaIntrinsic = InputArray.Create<double>(intrinsic);
-			//var oaRvec = OutputArray.Create<double>(new List<double>());
-			//var oaTvec = OutputArray.Create<double>(new List<double>());
-			//var iaDistCoeff = InputArray.Create(new Mat());
-
-			Cv2.SolvePnP(objectPoints, //led absolute position
-						 imagePoints, //positions from camera
-						 intrinsic,
-						 null, out rvec, out tvec, false, SolvePnPFlag.EPNP);
-
-			//Cv2.SolvePnP(iaObjectPoints, iaImagePoints, iaIntrinsic, iaDistCoeff, oaRvec, oaTvec);
-			//NativeMethods.calib3d_solvePnP_vector(objectPoints.ToArray(),
-			//									  objectPoints.Length,
-			//									  imagePoints,
-			//									  imagePoints.Length,
-			//									  intrinsic,
-			//									  new double[0],
-			//									  0,
-			//									  rvec,
-			//									  tvec,
-			//									  0,
-			//									  (int)SolvePnPFlag.Iterative);
 		}
 
 		private void InitializeIRBeaconModel()
