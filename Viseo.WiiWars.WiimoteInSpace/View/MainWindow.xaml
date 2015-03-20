@@ -8,11 +8,11 @@
 		xmlns:b="clr-namespace:Viseo.WiiWars.WiimoteInSpace.Behaviors"
 		xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="600">
-	<Window.DataContext>
-		<wm:MainWindowViewModel />
-	</Window.DataContext>
-	
+        Title="MainWindow" Height="400" Width="656"
+        d:DataContext="{d:DesignInstance Type=wm:DesignMainWindowViewModel, IsDesignTimeCreatable=True}">
+    <Window.DataContext>
+        <wm:MainWindowViewModel />
+    </Window.DataContext>
 	<Grid Name="Container">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400" />
@@ -59,33 +59,33 @@
 			<HelixToolkit:GridLinesVisual3D />
 		</HelixToolkit:HelixViewport3D>
         <StackPanel Grid.Column="1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <TextBlock Text="TranslateX = " Grid.Row="0" Grid.Column="0" />
-                <TextBlock Text="TranslateY = " Grid.Row="1" Grid.Column="0" />
-                <TextBlock Text="TranslateZ = " Grid.Row="2" Grid.Column="0" />
-                <TextBlock Text="RotX = " Grid.Row="3" Grid.Column="0" />
-                <TextBlock Text="RotY = " Grid.Row="4" Grid.Column="0" />
-                <TextBlock Text="RotZ = " Grid.Row="5" Grid.Column="0" />
-                <TextBlock Text="{Binding TranslateX}" Grid.Row="0" Grid.Column="1" />
-                <TextBlock Text="{Binding TranslateY}" Grid.Row="1" Grid.Column="1" />
-                <TextBlock Text="{Binding TranslateZ}" Grid.Row="2" Grid.Column="1" />
-                <TextBlock Text="{Binding RotX}" Grid.Row="3" Grid.Column="1" />
-                <TextBlock Text="{Binding RotY}" Grid.Row="4" Grid.Column="1" />
-                <TextBlock Text="{Binding RotZ}" Grid.Row="5" Grid.Column="1" />
-            </Grid>
-            
+
+            <TextBlock Text="{Binding TranslateX, StringFormat='TranslateX: {0:0.0000}'}" />
+            <TextBlock Text="{Binding TranslateY, StringFormat='TranslateY: {0:0.0000}'}" />
+            <TextBlock Text="{Binding TranslateZ, StringFormat='TranslateZ: {0:0.0000}'}" />
+            <TextBlock Text="{Binding RotX,       StringFormat='RotX      : {0:0.0000}'}" />
+            <TextBlock Text="{Binding RotY,       StringFormat='RotY      : {0:0.0000}'}" />
+            <TextBlock Text="{Binding RotZ,       StringFormat='RotZ      : {0:0.0000}'}" />
+            <TextBlock Text="{Binding CurrentColor, StringFormat='Current Color : {0}'}" />
+            <ItemsControl ItemsSource="{Binding IRPlots}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="256" Height="192" Background="Black">
+                        </Canvas>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="{Binding Size}" Height="{Binding Size}" Fill="{Binding Color}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </StackPanel>
 	</Grid>
 </Window>

@@ -11,11 +11,12 @@ using System.Windows.Threading;
 using WiimoteLib;
 using OpenCvSharp.CPlusPlus;
 using Viseo.WiiWars.WiimoteInSpace.Helper;
+using System.Reflection;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
-	public class MainWindowViewModel : ViewModelBase
-	{
+	public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
+    {
         #region Properties
         private readonly Dispatcher dispatcher;
 
@@ -137,13 +138,34 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         }
 
 
+        private List<IRPlotViewModel> _irPlots = new List<IRPlotViewModel>()
+        {
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Orange) },
+        };
+
+
+        public ICollection<IRPlotViewModel> IRPlots
+        {
+            get { return _irPlots; }
+        }
+
+        private int _currentColorIdx;
+
+        public string CurrentColor
+        {
+            get { return GetKnownColorName(_irPlots[_currentColorIdx].Color.Color); }
+        }
+        
         #endregion
 
         public MainWindowViewModel()
 		{
 			dispatcher = Dispatcher.CurrentDispatcher;
 
-			InitializeWiimote();
+            InitializeWiimote();
 			InitializeWiimoteModel();
 			//InitializeLightSaberModel();
 			InitializeIRBeaconModel();
@@ -187,13 +209,21 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 		private const double _cx = _imageWidth / 2;
 		private const double _cy = _imageHeight / 2;
 
+        private bool _lastA;
+        private bool _lastB;
+
 		#endregion
 
 		private void Wm_WiimoteChanged(object sender, WiimoteChangedEventArgs e)
 		{
 			var sensors = e.WiimoteState.IRState.IRSensors;
 
-			if (sensors.All(s => s.Found == true))
+            _irPlots[0].SetFromIRSensor(sensors[0]);
+            _irPlots[1].SetFromIRSensor(sensors[1]);
+            _irPlots[2].SetFromIRSensor(sensors[2]);
+            _irPlots[3].SetFromIRSensor(sensors[3]);
+
+            if (sensors.All(s => s.Found == true))
 			{
                 var rvec = new MatOfDouble(1, 3);
                 var tvec = new MatOfDouble(1, 3);
@@ -213,15 +243,32 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                 TranslateY = tvecIdxer[1];
                 TranslateZ = tvecIdxer[2];
 
-                RotX = rvecIdxer[0] * (180/Math.PI);
+                RotX = rvecIdxer[0] * (180 / Math.PI);
                 RotY = rvecIdxer[1] * (180 / Math.PI);
                 RotZ = rvecIdxer[2] * (180 / Math.PI);
 
             }
 
-		}
+            if (_lastA == true && e.WiimoteState.ButtonState.A == false)
+            {
+                _currentColorIdx = _currentColorIdx == 3 ? 0 : _currentColorIdx + 1;
+                OnPropertyChanged("CurrentColor");
+            }
+            _lastA = e.WiimoteState.ButtonState.A;
 
-		private void InitializeIRBeaconModel()
+            if (_lastB == true && e.WiimoteState.ButtonState.B == false)
+            {
+                var irPlot = _irPlots[_currentColorIdx];
+                _irPlots.RemoveAt(_currentColorIdx);
+                _currentColorIdx = _currentColorIdx == 3 ? 0 : _currentColorIdx + 1;
+                _irPlots.Insert(_currentColorIdx, irPlot);
+            }
+            _lastB = e.WiimoteState.ButtonState.B;
+
+
+        }
+
+        private void InitializeIRBeaconModel()
 		{
 			var transform = new TranslateTransform3D(0, 0, 4);
 
@@ -264,7 +311,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 		{
 			var modelGroup = new Model3DGroup();
 			var meshBuilder = new MeshBuilder();
-			meshBuilder.AddBox(new Point3D(0, 0, 5), 3.5, 14.5, 3);
+			meshBuilder.AddBox(new Point3D(0, 0, 0), 3.5, 14.5, 3);
 
 			var mesh = meshBuilder.ToMesh(true);
 
@@ -273,5 +320,25 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
 			Wiimote = modelGroup;
 		}
-	}
+
+        public static string GetKnownColorName(Color clr)
+        {
+            Color clrKnownColor;
+
+            //Use reflection to get all known colors
+            Type ColorType = typeof(System.Windows.Media.Colors);
+            PropertyInfo[] arrPiColors = ColorType.GetProperties(BindingFlags.Public | BindingFlags.Static);
+
+            //Iterate over all known colors, convert each to a <Color> and then compare
+            //that color to the passed color.
+            foreach (PropertyInfo pi in arrPiColors)
+            {
+                clrKnownColor = (Color)pi.GetValue(null, null);
+                if (clrKnownColor == clr) return pi.Name;
+            }
+
+            return string.Empty;
+        }
+
+    }
 }

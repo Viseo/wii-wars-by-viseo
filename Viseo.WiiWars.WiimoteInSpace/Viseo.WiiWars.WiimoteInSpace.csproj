@@ -139,6 +139,9 @@
     </Compile>
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Helper\OpenCVHelper.cs" />
+    <Compile Include="ViewModel\DesignMainWindowViewModel.cs" />
+    <Compile Include="ViewModel\IMainWindowViewModel.cs" />
+    <Compile Include="ViewModel\IRPlotViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
