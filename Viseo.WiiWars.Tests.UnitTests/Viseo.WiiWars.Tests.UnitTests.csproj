@@ -50,14 +50,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="..\Viseo.WiiWars.Models\Saber.cs">
+      <Link>Models\Saber.cs</Link>
+    </Compile>
+    <Compile Include="CheckSaberStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Viseo.WiiWars.WiimoteInSpace\Viseo.WiiWars.WiimoteInSpace.csproj">
-      <Project>{8095e2bf-8799-4170-9ea0-18e561ff6ef7}</Project>
-      <Name>Viseo.WiiWars.WiimoteInSpace</Name>
-    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

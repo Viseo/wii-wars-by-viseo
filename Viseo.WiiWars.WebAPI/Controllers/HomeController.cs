@@ -12,5 +12,7 @@ namespace Viseo.WiiWars.WebAPI.Controllers
         {
             return View();
         }
+
+
     }
 }
