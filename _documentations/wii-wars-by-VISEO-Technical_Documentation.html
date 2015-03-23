@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<p>Wii-Wars by VISEO</p>
+<p>Version : 1.0</p>
+<p>March 22nd 2015</p>
+<p>TABLE OF CONTENT</p>
+<p><a href="#_Toc414809764">1 Introduction 3</a></p>
+<p><a href="#_Toc414809765">1.1 Objet de la proposition 3</a></p>
+<p><span id="_Toc459656882" class="anchor"><span id="_Toc459728901" class="anchor"><span id="_Toc10029850" class="anchor"><span id="_Toc402963087" class="anchor"><span id="_Toc402963483" class="anchor"><span id="_Toc403380460" class="anchor"><span id="_Toc404850566" class="anchor"><span id="_Toc414809764" class="anchor"><span id="_Toc432477691" class="anchor"><span id="_Toc459089889" class="anchor"></span></span></span></span></span></span></span></span></span></span>Introduction<span id="_Toc459656883" class="anchor"><span id="_Toc459728902" class="anchor"><span id="_Toc10029851" class="anchor"></span></span></span></p>
+<ol style="list-style-type: decimal">
+<li><p>About this document</p></li>
+</ol>
+<p>This document meant to be converted from an <strong>Word Open Document (*.odt)</strong> to <strong>GIT Markdown (*.md file)</strong> format for better Web rendering using Open Source format. This conversion could be done using this <a href="https://gist.github.com/vzvenyach/7278543" class="uri">https://gist.github.com/vzvenyach/7278543</a></p>
+<ol style="list-style-type: decimal">
+<li><p>Pre-requisites : OpenSource projects to be installed</p></li>
+</ol>
+<p>To generate online docs from odt docs.</p>
+<p><a href="https://github.com/jgm/pandoc/releases/tag/1.13.2" class="uri">https://github.com/jgm/pandoc/releases/tag/1.13.2</a></p>
+<ol style="list-style-type: decimal">
+<li><p>Origin of this project</p></li>
+</ol>
+<p>Late 2009, pseudo-connected objects and <strong>augmented reality</strong> were made possible using the OpenSource project <a href="https://slartoolkit.codeplex.com/">SLARToolkit</a> relying on Silverlight technologies and a Webcam.</p>
+<p>Johnny Chung Lee started the move in 2008, with its Wiimote project: <a href="http://www.wiimoteproject.com" class="uri">http://www.wiimoteproject.com</a></p>
+<p><img src="media/image1.png" /></p>
+<ol style="list-style-type: decimal">
+<li><p>Overview of the project : Augmented reality</p></li>
+</ol>
+<p><img src="media/image2.png" /></p>
+<ol style="list-style-type: decimal">
+<li><p>TECHNICAL CONSIDERATION</p>
+<ol style="list-style-type: decimal">
+<li><p>Overview</p></li>
+</ol></li>
+</ol>
+<p><img src="media/image3.png" /></p>
+<ol style="list-style-type: decimal">
+<li><p>Behavior-Driven Development (BDD) using SpecFlow on VS2015 CTP6</p>
+<ol style="list-style-type: decimal">
+<li><p>How to make it work on a CTP version?</p></li>
+</ol></li>
+</ol>
+<p>See ref <a href="https://groups.google.com/forum/#!topic/specflow/kSIxU-CFZZg" class="uri">https://groups.google.com/forum/#!topic/specflow/kSIxU-CFZZg</a></p>
+<p>And <a href="https://github.com/techtalk/SpecFlow/issues/379" class="uri">https://github.com/techtalk/SpecFlow/issues/379</a></p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left"><p>Download the extension from the <a href="http://www.google.com/url?q=http%3A%2F%2Fgo.specflow.org%2Fvsgallery2013&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHCW4gnFbpCGCV62uU9Wx7oHJ__sA">gallery</a>.</p>
+<p>Update the extension.vsixmanifest inside the package (it's just a zip-container)<br />  &lt;Installation&gt;<br />    &lt;InstallationTarget Id=&quot;<a href="http://microsoft.visualstudio.pro/">Microsoft.VisualStudio.Pro</a>&quot; Version=&quot;14.0&quot; /&gt;<br />    &lt;InstallationTarget Id=&quot;Microsoft.VisualStudio.Premium&quot; Version=&quot;14.0&quot; /&gt;<br />    &lt;InstallationTarget Id=&quot;Microsoft.VisualStudio.Ultimate&quot; Version=&quot;14.0&quot; /&gt;<br />  &lt;/Installation&gt;</p>
+<p>Zip it back again CAUTION : an error WILL occur when installing the vsix IF you do not Zip only the root of the package. Check by unzipping it to see that you should not have any sub-folder in the Zip, but <strong>DIRECTLY</strong> the files</p>
+<p>Modify devenv.exe.config (C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe.config):<br />&lt;dependentAssembly&gt;<br /> &lt;assemblyIdentity name=&quot;Microsoft.VisualStudio.TestWindow&quot; publicKeyToken=&quot;b03f5f7f11d50a3a&quot; culture=&quot;neutral&quot;/&gt;<br /> &lt;bindingRedirect oldVersion=&quot;10.0.0.0-12.0.0.0&quot; newVersion=&quot;14.0.0.0&quot;/&gt;<br />&lt;/dependentAssembly&gt;</p></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

@@ -27,6 +27,12 @@ namespace Viseo.WiiWars.Models
 
         private enumSaberColor _enumSaberColor;
 
+        public enumSaberColor SaberColor
+        {
+            get { return _enumSaberColor; }
+            set { _enumSaberColor = value; }
+        }
+
         /// <summary>
         /// Allows to turn On or Off the Saber.
         /// </summary>
@@ -40,18 +46,13 @@ namespace Viseo.WiiWars.Models
             get { return _isSaberOn; }
         }
 
-        public Saber()
-        {
-
-        }
-        public Saber(int id)
-        {
-            _id = id;
-        }
         public Saber(int id, enumSaberColor mySaberColor)
         {
             _id = id;
             _enumSaberColor = mySaberColor;
+
+            // By default, it is turned off.
+            _isSaberOn = false;
         }
 
         public void TurnOn()
@@ -69,9 +70,9 @@ namespace Viseo.WiiWars.Models
             _isSaberOn = !_isSaberOn;
         }
 
-        internal enumSaberColor getColor()
-        {
-            return _enumSaberColor;
-        }
+        //internal enumSaberColor getColor()
+        //{
+        //    return _enumSaberColor;
+        //}
     }
 }

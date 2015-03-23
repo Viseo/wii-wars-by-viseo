@@ -15,11 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viseo.WiiWars.Tests.UnitTes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Documentations", "_Documentations", "{619AA211-AC2C-4E6E-99E2-7B195EF57F56}"
 	ProjectSection(SolutionItems) = preProject
-		_documentations\resources\EmetteursIR_Wiimote.jpg = _documentations\resources\EmetteursIR_Wiimote.jpg
-		_documentations\resources\EmulateurMontreAndroid.jpg = _documentations\resources\EmulateurMontreAndroid.jpg
-		_documentations\resources\Logo_WiiWarsbyVISEO_PaintDotNet.pdn = _documentations\resources\Logo_WiiWarsbyVISEO_PaintDotNet.pdn
-		_documentations\resources\MontreConnectée-ContrôlantSabresLaser.jpg = _documentations\resources\MontreConnectée-ContrôlantSabresLaser.jpg
-		_documentations\wii-wars-by-VISEO-Technical_Documentation.odt = _documentations\wii-wars-by-VISEO-Technical_Documentation.odt
+		_documentations\Convert_Docx2Html.bat = _documentations\Convert_Docx2Html.bat
+		_documentations\EmetteursIR_Wiimote.jpg = _documentations\EmetteursIR_Wiimote.jpg
+		_documentations\EmulateurMontreAndroid.jpg = _documentations\EmulateurMontreAndroid.jpg
+		_documentations\Logo_WiiWarsbyVISEO_PaintDotNet.pdn = _documentations\Logo_WiiWarsbyVISEO_PaintDotNet.pdn
+		_documentations\MontreConnectée-ContrôlantSabresLaser.jpg = _documentations\MontreConnectée-ContrôlantSabresLaser.jpg
+		_documentations\wii-wars-by-VISEO-Technical_DocOriginal.docx = _documentations\wii-wars-by-VISEO-Technical_DocOriginal.docx
+		_documentations\wii-wars-by-VISEO-Technical_Documentation.html = _documentations\wii-wars-by-VISEO-Technical_Documentation.html
 	EndProjectSection
 EndProject
 Global
