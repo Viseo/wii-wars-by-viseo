@@ -31,8 +31,8 @@ namespace Viseo.WiiWars.Tests.UnitTests
         public static void FeatureSetup(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext)
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "CheckSaberStatus", "In order to ensure I have the best ever laser Saber\nAs a great fighter\nI want to " +
-                    "chech automatically all available features of my Laser Saber", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "CheckSaberStatus", "In order to ensure I have the best ever laser Saber\r\nAs a great fighter\r\nI want t" +
+                    "o chech automatically all available features of my Laser Saber", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         

@@ -17,6 +17,19 @@ namespace Viseo.WiiWars.Models
             get { return _id; }
         }
 
+        /// <summary>
+        /// Determines the score for the unique ID of the Saber.
+        /// </summary>
+        private int _score;
+
+        /// <summary>
+        /// Read only property to get the Score of the Saber.
+        /// </summary>
+        public int score
+        {
+            get { return _score; }
+        }
+
         public enum enumSaberColor
         {
             Blue,
@@ -53,6 +66,11 @@ namespace Viseo.WiiWars.Models
 
             // By default, it is turned off.
             _isSaberOn = false;
+
+            // Creates a number score.
+            // System.Random myRandom = new System.Random();
+            // int randomScore = myRandom.Next(1, 123456); 
+            _score = 32157;
         }
 
         public void TurnOn()
