@@ -14,8 +14,13 @@ using WiimoteLib;
 
 namespace Viseo.WiiWars.ViewModel
 {
+    using Microsoft.ServiceBus;
+    using Microsoft.ServiceBus.Messaging;
+    using Newtonsoft.Json;
+
     public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     {
+        private const string EVENT_HUB_NAME = "viseo-wii-wars-dev-noeu-eventhub";
         private FilterInfoCollection _videoDevices;
         private VideoCaptureDevice _videoSource;
         private readonly SynchronizationContext _synchronizationContext;
@@ -277,9 +282,71 @@ namespace Viseo.WiiWars.ViewModel
             }
         }
 
-        private void SendEventsToEventHub(int dEVICE_A, int v1, int v2, int v3, int v4, int v5)
+        private void SendEventsToEventHub(int deviceId, int x, int y, int z, int rotationA, int rotationB)
         {
-            throw new NotImplementedException();
+
+            // Sender = new EventHub.EventHubSender(GetServiceBusConnectionString());
+
+            string connectionString = GetServiceBusConnectionString();
+            NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+
+            // Manage.CreateEventHub(_eventHubName, _numberOfPartitions, namespaceManager);
+
+            EventHubDescription eventHubDescription = new EventHubDescription(EVENT_HUB_NAME);
+            eventHubDescription.PartitionCount = 8;
+            namespaceManager.CreateEventHubIfNotExistsAsync(eventHubDescription).Wait();
+
+            //Receiver r = new Receiver(_eventHubName, connectionString);
+            //r.MessageProcessingWithPartitionDistribution();
+
+            // Sender s = new Sender(_eventHubName, _numberOfMessages);
+            // s.SendEvents();
+
+            // Create EventHubClient
+            EventHubClient client = EventHubClient.Create(EVENT_HUB_NAME);
+
+            string myStringData = string.Format("Into Eventhub {0}, {1}, {2}, {3}, {4}, {5}",
+                deviceId, x, y, z, rotationA, rotationB);
+
+            const int DEVICE_CONSIDERED = 5;
+            const int NUMBER_OF_MESSAGES = 2;
+
+            try
+            {
+                List<System.Threading.Tasks.Task> tasks = new List<System.Threading.Tasks.Task>();
+                // Send messages to Event Hub
+                Console.WriteLine("Sending messages to Event Hub {0}", client.Path);
+                Random random = new Random();
+                for (int i = 0; i < NUMBER_OF_MESSAGES; ++i)
+                {
+                    // Create the device/temperature metric
+                   //  MetricEvent info = new MetricEvent() { DeviceId = random.Next(NUMBER_OF_DEVICES), Temperature = random.Next(100) };
+                    var serializedString = JsonConvert.SerializeObject(myStringData);
+                    EventData data = new EventData(System.Text.Encoding.UTF8.GetBytes(serializedString))
+                    {
+                        PartitionKey = DEVICE_CONSIDERED.ToString()
+                    };
+
+                    // Set user properties if needed
+                    data.Properties.Add("Type", "Telemetry_" + DateTime.Now.ToLongTimeString());
+                    // OutputMessageInfo("SENDING: ", data, info);
+
+                    // Send the metric to Event Hub
+                    tasks.Add(client.SendAsync(data));
+                }
+
+                System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine("Error on send: " + exp.Message);
+            }
+
+            client.CloseAsync().Wait();
+
+            // Sender.Send(myStringData, deviceId.ToString()); 
+            //Sender.Send(e.WiimoteState, ((Wiimote)sender).ID.ToString());
+
         }
 
         private EventHub.EventHubSender Sender { get; set; }
@@ -297,6 +364,19 @@ namespace Viseo.WiiWars.ViewModel
             foreach (Wiimote wm in WiimoteCollection)
                 wm.Disconnect();
             GC.SuppressFinalize(this);
+        }
+
+        private static string GetServiceBusConnectionString()
+        {
+            string connectionString = ConfigurationManager.AppSettings["Microsoft.ServiceBus.ConnectionString"];
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                Console.WriteLine("Did not find Service Bus connections string in appsettings (app.config)");
+                return string.Empty;
+            }
+            ServiceBusConnectionStringBuilder builder = new ServiceBusConnectionStringBuilder(connectionString);
+            builder.TransportType = TransportType.Amqp;
+            return builder.ToString();
         }
     }
 }
