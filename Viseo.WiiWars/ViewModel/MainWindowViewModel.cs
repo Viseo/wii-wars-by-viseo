@@ -229,7 +229,20 @@ namespace Viseo.WiiWars.ViewModel
 
             if (WiimoteCollection.Count == 0)
             {
-                MessageBox.Show("DEBUG_VTH: Wiimote not found.", Properties.Resources.WiimoteNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("DEBUG_VTH: Wiimote not found.", 
+                    Properties.Resources.WiimoteNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                                // No wiimote => As a PoC, sends dummy elements into the Azure Eventhub.
+                Random random = new Random();
+                const int DEVICE_A = 1;
+
+                SendEventsToEventHub(
+                    DEVICE_A,
+                    random.Next(6514), // X
+                    random.Next(512), // Y
+                    random.Next(458), // Z
+                    random.Next(8236), // Rotation A
+                    random.Next(751)); // Rotation B
             }
             else
             {
@@ -262,6 +275,11 @@ namespace Viseo.WiiWars.ViewModel
                     //wm.WiimoteChanged += Wm_WiimoteChanged;
                 }
             }
+        }
+
+        private void SendEventsToEventHub(int dEVICE_A, int v1, int v2, int v3, int v4, int v5)
+        {
+            throw new NotImplementedException();
         }
 
         private EventHub.EventHubSender Sender { get; set; }
