@@ -234,10 +234,10 @@ namespace Viseo.WiiWars.ViewModel
 
             if (WiimoteCollection.Count == 0)
             {
-                MessageBox.Show("DEBUG_VTH: Wiimote not found.", 
+                MessageBox.Show("DEBUG_VTH: Wiimote not found.",
                     Properties.Resources.WiimoteNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
 
-                                // No wiimote => As a PoC, sends dummy elements into the Azure Eventhub.
+                // No wiimote => As a PoC, sends dummy elements into the Azure Eventhub.
                 Random random = new Random();
                 const int DEVICE_A = 1;
 
@@ -284,43 +284,31 @@ namespace Viseo.WiiWars.ViewModel
 
         private void SendEventsToEventHub(int deviceId, int x, int y, int z, int rotationA, int rotationB)
         {
-
-            // Sender = new EventHub.EventHubSender(GetServiceBusConnectionString());
-
             string connectionString = GetServiceBusConnectionString();
             NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-
-            // Manage.CreateEventHub(_eventHubName, _numberOfPartitions, namespaceManager);
-
             EventHubDescription eventHubDescription = new EventHubDescription(EVENT_HUB_NAME);
             eventHubDescription.PartitionCount = 8;
             namespaceManager.CreateEventHubIfNotExistsAsync(eventHubDescription).Wait();
 
-            //Receiver r = new Receiver(_eventHubName, connectionString);
-            //r.MessageProcessingWithPartitionDistribution();
-
-            // Sender s = new Sender(_eventHubName, _numberOfMessages);
-            // s.SendEvents();
-
             // Create EventHubClient
             EventHubClient client = EventHubClient.Create(EVENT_HUB_NAME);
 
-            string myStringData = string.Format("Into Eventhub {0}, {1}, {2}, {3}, {4}, {5}",
-                deviceId, x, y, z, rotationA, rotationB);
-
             const int DEVICE_CONSIDERED = 5;
-            const int NUMBER_OF_MESSAGES = 2;
+            const int NUMBER_OF_MESSAGES = 50;
 
             try
             {
                 List<System.Threading.Tasks.Task> tasks = new List<System.Threading.Tasks.Task>();
+
                 // Send messages to Event Hub
                 Console.WriteLine("Sending messages to Event Hub {0}", client.Path);
                 Random random = new Random();
                 for (int i = 0; i < NUMBER_OF_MESSAGES; ++i)
                 {
+                    string myStringData = string.Format("Into Eventhub {0}, {1}, {2}, {3}, {4}, {5}",
+                            deviceId, x, y*random.Next(6565161), z*random.Next(6161), rotationA, rotationB);
+
                     // Create the device/temperature metric
-                   //  MetricEvent info = new MetricEvent() { DeviceId = random.Next(NUMBER_OF_DEVICES), Temperature = random.Next(100) };
                     var serializedString = JsonConvert.SerializeObject(myStringData);
                     EventData data = new EventData(System.Text.Encoding.UTF8.GetBytes(serializedString))
                     {
@@ -329,7 +317,6 @@ namespace Viseo.WiiWars.ViewModel
 
                     // Set user properties if needed
                     data.Properties.Add("Type", "Telemetry_" + DateTime.Now.ToLongTimeString());
-                    // OutputMessageInfo("SENDING: ", data, info);
 
                     // Send the metric to Event Hub
                     tasks.Add(client.SendAsync(data));
@@ -343,10 +330,6 @@ namespace Viseo.WiiWars.ViewModel
             }
 
             client.CloseAsync().Wait();
-
-            // Sender.Send(myStringData, deviceId.ToString()); 
-            //Sender.Send(e.WiimoteState, ((Wiimote)sender).ID.ToString());
-
         }
 
         private EventHub.EventHubSender Sender { get; set; }
