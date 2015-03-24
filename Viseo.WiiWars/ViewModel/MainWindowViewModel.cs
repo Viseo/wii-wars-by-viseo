@@ -14,13 +14,8 @@ using WiimoteLib;
 
 namespace Viseo.WiiWars.ViewModel
 {
-    using Microsoft.ServiceBus;
-    using Microsoft.ServiceBus.Messaging;
-    using Newtonsoft.Json;
-
     public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     {
-        private const string EVENT_HUB_NAME = "viseo-wii-wars-dev-noeu-eventhub";
         private FilterInfoCollection _videoDevices;
         private VideoCaptureDevice _videoSource;
         private readonly SynchronizationContext _synchronizationContext;
@@ -193,7 +188,6 @@ namespace Viseo.WiiWars.ViewModel
 
         private void StartStopSendingToAzure()
         {
-
         }
 
         public MainWindowViewModel()
@@ -204,9 +198,7 @@ namespace Viseo.WiiWars.ViewModel
 
             InitializeWebCamList();
             InitializeWiimoteList();
-
         }
-
 
         private void InitializeWebCamList()
         {
@@ -241,11 +233,11 @@ namespace Viseo.WiiWars.ViewModel
                 Random random = new Random();
                 const int DEVICE_A = 1;
 
-                SendEventsToEventHub(
+                EventHub.EventHubSender.SendEventsToEventHub(
                     DEVICE_A,
                     random.Next(6514), // X
-                    random.Next(512), // Y
-                    random.Next(458), // Z
+                    random.Next(512),  // Y
+                    random.Next(458),  // Z
                     random.Next(8236), // Rotation A
                     random.Next(751)); // Rotation B
             }
@@ -282,56 +274,6 @@ namespace Viseo.WiiWars.ViewModel
             }
         }
 
-        private void SendEventsToEventHub(int deviceId, int x, int y, int z, int rotationA, int rotationB)
-        {
-            string connectionString = GetServiceBusConnectionString();
-            NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-            EventHubDescription eventHubDescription = new EventHubDescription(EVENT_HUB_NAME);
-            eventHubDescription.PartitionCount = 8;
-            namespaceManager.CreateEventHubIfNotExistsAsync(eventHubDescription).Wait();
-
-            // Create EventHubClient
-            EventHubClient client = EventHubClient.Create(EVENT_HUB_NAME);
-
-            const int DEVICE_CONSIDERED = 5;
-            const int NUMBER_OF_MESSAGES = 50;
-
-            try
-            {
-                List<System.Threading.Tasks.Task> tasks = new List<System.Threading.Tasks.Task>();
-
-                // Send messages to Event Hub
-                Console.WriteLine("Sending messages to Event Hub {0}", client.Path);
-                Random random = new Random();
-                for (int i = 0; i < NUMBER_OF_MESSAGES; ++i)
-                {
-                    string myStringData = string.Format("Into Eventhub {0}, {1}, {2}, {3}, {4}, {5}",
-                            deviceId, x, y*random.Next(6565161), z*random.Next(6161), rotationA, rotationB);
-
-                    // Create the device/temperature metric
-                    var serializedString = JsonConvert.SerializeObject(myStringData);
-                    EventData data = new EventData(System.Text.Encoding.UTF8.GetBytes(serializedString))
-                    {
-                        PartitionKey = DEVICE_CONSIDERED.ToString()
-                    };
-
-                    // Set user properties if needed
-                    data.Properties.Add("Type", "Telemetry_" + DateTime.Now.ToLongTimeString());
-
-                    // Send the metric to Event Hub
-                    tasks.Add(client.SendAsync(data));
-                }
-
-                System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
-            }
-            catch (Exception exp)
-            {
-                Console.WriteLine("Error on send: " + exp.Message);
-            }
-
-            client.CloseAsync().Wait();
-        }
-
         private EventHub.EventHubSender Sender { get; set; }
 
         private void Wm_WiimoteChanged(object sender, WiimoteChangedEventArgs e)
@@ -347,19 +289,6 @@ namespace Viseo.WiiWars.ViewModel
             foreach (Wiimote wm in WiimoteCollection)
                 wm.Disconnect();
             GC.SuppressFinalize(this);
-        }
-
-        private static string GetServiceBusConnectionString()
-        {
-            string connectionString = ConfigurationManager.AppSettings["Microsoft.ServiceBus.ConnectionString"];
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                Console.WriteLine("Did not find Service Bus connections string in appsettings (app.config)");
-                return string.Empty;
-            }
-            ServiceBusConnectionStringBuilder builder = new ServiceBusConnectionStringBuilder(connectionString);
-            builder.TransportType = TransportType.Amqp;
-            return builder.ToString();
         }
     }
 }
