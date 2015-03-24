@@ -35,7 +35,7 @@ namespace Viseo.WiiWars.WebAPI.Controllers
 
             return test;
         }
-
+                 
         // POST api/values
         [HttpPost]
         public void Post([FromBody]string value)
