@@ -56,15 +56,6 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 			}
 		}
 
-
-		private Point3D[] _ledPositions = new Point3D[4]
-		{
-			new Point3D(2.5, 0.5, 1.5),
-			new Point3D(2.5, 0.5, -1),
-			new Point3D(3.5, 0.5, -2.5),
-			new Point3D(-3.5, 0.5, -2.5)
-		};
-
         private double _translateX;
 
         public double TranslateX
@@ -137,13 +128,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
-
         private List<IRPlotViewModel> _irPlots = new List<IRPlotViewModel>()
         {
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Orange) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue), Point = new Point3D(2.8, 0.5, 1.6) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow), Point = new Point3D(2.8, 0.5, -1.6) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red), Point = new Point3D(-3.3, 0.5, -1.6) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Green), Point = new Point3D(-3.3, 0.5, 0.5) },
         };
 
 
@@ -158,7 +148,57 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         {
             get { return GetKnownColorName(_irPlots[_currentColorIdx].Color.Color); }
         }
-        
+
+        private string _ir1;
+
+        public string IR1
+        {
+            get { return _ir1; }
+            set
+            {
+                _ir1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _ir2;
+
+        public string IR2
+        {
+            get { return _ir2; }
+            set
+            {
+                _ir2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _ir3;
+
+        public string IR3
+        {
+            get { return _ir3; }
+            set
+            {
+                _ir3 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _ir4;
+
+        public string IR4
+        {
+            get { return _ir4; }
+            set
+            {
+                _ir4 = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+
         #endregion
 
         public MainWindowViewModel()
@@ -218,6 +258,11 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 		{
 			var sensors = e.WiimoteState.IRState.IRSensors;
 
+            IR1 = "IR1: " + sensors[0].RawPosition.ToString();
+            IR2 = "IR2: " + sensors[1].RawPosition.ToString();
+            IR3 = "IR3: " + sensors[2].RawPosition.ToString();
+            IR4 = "IR4: " + sensors[3].RawPosition.ToString();
+
             _irPlots[0].SetFromIRSensor(sensors[0]);
             _irPlots[1].SetFromIRSensor(sensors[1]);
             _irPlots[2].SetFromIRSensor(sensors[2]);
@@ -225,9 +270,9 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
             if (sensors.All(s => s.Found == true))
 			{
-                var rvec = new MatOfDouble(1, 3);
-                var tvec = new MatOfDouble(1, 3);
-                var objectPoints = InputArray.Create(_ledPositions.ToPoint3f().ToArray());
+                var rvec = new MatOfDouble(3, 1);
+                var tvec = new MatOfDouble(3, 1);
+                var objectPoints = InputArray.Create(_irPlots.Select(i => i.Point.ToPoint3f()).ToArray());
 				var imagePoints = InputArray.Create(sensors.Select(s => s.RawPosition).ToPoint2f().ToArray());
 				var intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
 
@@ -238,7 +283,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
                 var rvecIdxer = rvec.GetIndexer();
                 var tvecIdxer = tvec.GetIndexer();
-
+                
                 TranslateX = tvecIdxer[0];
                 TranslateY = tvecIdxer[1];
                 TranslateZ = tvecIdxer[2];
@@ -270,8 +315,6 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
         private void InitializeIRBeaconModel()
 		{
-			var transform = new TranslateTransform3D(0, 0, 4);
-
 			var modelGroup = new Model3DGroup();
 			var meshBuilder = new MeshBuilder();
 			meshBuilder.AddBox(new Point3D(0, 0, 0), 8, 0.5, 6);
@@ -279,16 +322,16 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 			var mesh = meshBuilder.ToMesh(true);
 
 			var cardMaterial = MaterialHelper.CreateMaterial(Colors.WhiteSmoke);
-			modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = cardMaterial, BackMaterial = cardMaterial , Transform = transform});
+			modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = cardMaterial, BackMaterial = cardMaterial });
 
 			meshBuilder = new MeshBuilder();
-			foreach (var led in _ledPositions)
-				meshBuilder.AddSphere(led, 0.2);
+			foreach (var ir in _irPlots)
+				meshBuilder.AddSphere(ir.Point, 0.2);
 			mesh = meshBuilder.ToMesh(true);
 			var ledMaterial = MaterialHelper.CreateMaterial(Colors.SteelBlue);
-			modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = ledMaterial, BackMaterial = ledMaterial, Transform = transform });
+			modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = ledMaterial, BackMaterial = ledMaterial });
 
-			IRBeacon = modelGroup;
+            IRBeacon = modelGroup;
 		}
 
 		private async void InitializeLightSaberModel()
@@ -309,7 +352,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
 		private void InitializeWiimoteModel()
 		{
-			var modelGroup = new Model3DGroup();
+            var modelGroup = new Model3DGroup();
 			var meshBuilder = new MeshBuilder();
 			meshBuilder.AddBox(new Point3D(0, 0, 0), 3.5, 14.5, 3);
 
@@ -318,7 +361,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 			var whiteMaterial = MaterialHelper.CreateMaterial(Colors.White);
 			modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = whiteMaterial, BackMaterial = whiteMaterial });
 
-			Wiimote = modelGroup;
+            Wiimote = modelGroup;
 		}
 
         public static string GetKnownColorName(Color clr)

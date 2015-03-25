@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using WiimoteLib;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
@@ -43,10 +44,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
 		public SolidColorBrush Color { get; set; }
 
-		internal void SetFromIRSensor(IRSensor sensor)
+        public Point3D Point { get; set; }
+
+        internal void SetFromIRSensor(IRSensor sensor)
 		{
 			X = 256 - sensor.RawPosition.X / 4;
-			Y = sensor.RawPosition.Y / 4;
+			Y = 192 - sensor.RawPosition.Y / 4;
 			Size = sensor.Found ? 5 : 0;
 		}
 	}

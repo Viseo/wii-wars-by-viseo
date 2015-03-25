@@ -19,21 +19,39 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 		<HelixToolkit:HelixViewport3D ShowFrameRate="True" 
-                           InfiniteSpin="true" 
-                           IsHeadLightEnabled="True"
-                           InfoBackground="Transparent"
-                           InfoForeground="Black"
-                           ShowCoordinateSystem="True"
-                           CoordinateSystemLabelForeground="White"
-                           CoordinateSystemLabelX="x"
-                           CoordinateSystemLabelY="y"
-                           CoordinateSystemLabelZ="z"
-                           TextBrush="White">
+                                      InfiniteSpin="true" 
+                                      IsHeadLightEnabled="True"
+                                      InfoBackground="Transparent"
+                                      InfoForeground="Black"
+                                      ShowCoordinateSystem="True"
+                                      ShowViewCube="True"
+                                      ShowCameraInfo="True"
+                                      ShowCameraTarget="True"
+                                      CoordinateSystemLabelForeground="White"
+                                      CoordinateSystemLabelX="x"
+                                      CoordinateSystemLabelY="y"
+                                      CoordinateSystemLabelZ="z"
+                                      TextBrush="White">
             <HelixToolkit:SunLight/>
             <ModelVisual3D Content="{Binding Wiimote}">
                 <ModelVisual3D.Transform>
                     <Transform3DGroup>
                         <Transform3DGroup.Children>
+                            <RotateTransform3D>
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="0,1,0" Angle="-90" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <RotateTransform3D>
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="1,0,0" Angle="90" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <RotateTransform3D>
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="0,1,0" Angle="-90" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
                             <RotateTransform3D>
                                 <RotateTransform3D.Rotation>
                                     <AxisAngleRotation3D Axis="1,0,0" Angle="{Binding RotX}" />
@@ -55,17 +73,51 @@
                 </ModelVisual3D.Transform>
             </ModelVisual3D>
             <!--<ModelVisual3D Content="{Binding LightSaber}"/>-->
-			<ModelVisual3D Content="{Binding IRBeacon}"/>
-			<HelixToolkit:GridLinesVisual3D />
+            <ModelVisual3D Content="{Binding IRBeacon}">
+                <ModelVisual3D.Transform>
+                    <Transform3DGroup>
+                        <Transform3DGroup.Children>
+                            <RotateTransform3D>
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="0,1,0" Angle="-90" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <RotateTransform3D>
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="1,0,0" Angle="90" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                        </Transform3DGroup.Children>
+                    </Transform3DGroup>
+                </ModelVisual3D.Transform>
+            </ModelVisual3D>
+            <HelixToolkit:GridLinesVisual3D />
 		</HelixToolkit:HelixViewport3D>
         <StackPanel Grid.Column="1">
-
-            <TextBlock Text="{Binding TranslateX, StringFormat='TranslateX: {0:0.0000}'}" />
-            <TextBlock Text="{Binding TranslateY, StringFormat='TranslateY: {0:0.0000}'}" />
-            <TextBlock Text="{Binding TranslateZ, StringFormat='TranslateZ: {0:0.0000}'}" />
-            <TextBlock Text="{Binding RotX,       StringFormat='RotX      : {0:0.0000}'}" />
-            <TextBlock Text="{Binding RotY,       StringFormat='RotY      : {0:0.0000}'}" />
-            <TextBlock Text="{Binding RotZ,       StringFormat='RotZ      : {0:0.0000}'}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding TranslateX, StringFormat='TranslateX: {0:0.0000}'}" Grid.Row="0" />
+                <TextBlock Text="{Binding TranslateY, StringFormat='TranslateY: {0:0.0000}'}" Grid.Row="1" />
+                <TextBlock Text="{Binding TranslateZ, StringFormat='TranslateZ: {0:0.0000}'}" Grid.Row="2" />
+                <TextBlock Text="{Binding RotX,       StringFormat='RotX      : {0:0.0000}'}" Grid.Row="3" />
+                <TextBlock Text="{Binding RotY,       StringFormat='RotY      : {0:0.0000}'}" Grid.Row="4" />
+                <TextBlock Text="{Binding RotZ,       StringFormat='RotZ      : {0:0.0000}'}" Grid.Row="5" />
+                <TextBlock Text="{Binding IR1}" Grid.Column="1"  Grid.Row="0"/>
+                <TextBlock Text="{Binding IR2}" Grid.Column="1"  Grid.Row="1"/>
+                <TextBlock Text="{Binding IR3}" Grid.Column="1"  Grid.Row="2"/>
+                <TextBlock Text="{Binding IR4}" Grid.Column="1"  Grid.Row="3"/>
+            </Grid>
             <TextBlock Text="{Binding CurrentColor, StringFormat='Current Color : {0}'}" />
             <ItemsControl ItemsSource="{Binding IRPlots}">
                 <ItemsControl.ItemsPanel>
@@ -77,7 +129,7 @@
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
                         <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        <Setter Property="Canvas.Bottom" Value="{Binding Y}"/>
                     </Style>
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
