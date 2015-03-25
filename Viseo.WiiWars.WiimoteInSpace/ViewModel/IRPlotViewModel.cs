@@ -1,5 +1,7 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using OpenCvSharp.CPlusPlus;
 using WiimoteLib;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
@@ -52,5 +54,5 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 			Y = 192 - sensor.RawPosition.Y / 4;
 			Size = sensor.Found ? 5 : 0;
 		}
-	}
+    }
 }

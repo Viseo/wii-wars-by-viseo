@@ -15,46 +15,46 @@ using System.Reflection;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
-	public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
+    public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     {
         #region Properties
         private readonly Dispatcher dispatcher;
 
-		private Model3D _wiimote;
+        private Model3D _wiimote;
 
-		public Model3D Wiimote
-		{
-			get { return _wiimote; }
-			set
-			{
-				_wiimote = value;
-				OnPropertyChanged();
-			}
-		}
+        public Model3D Wiimote
+        {
+            get { return _wiimote; }
+            set
+            {
+                _wiimote = value;
+                OnPropertyChanged();
+            }
+        }
 
-		private Model3D _lightSaber;
+        private Model3D _lightSaber;
 
-		public Model3D LightSaber
-		{
-			get { return _lightSaber; }
-			set
-			{
-				_lightSaber = value;
-				OnPropertyChanged();
-			}
-		}
+        public Model3D LightSaber
+        {
+            get { return _lightSaber; }
+            set
+            {
+                _lightSaber = value;
+                OnPropertyChanged();
+            }
+        }
 
-		private Model3D _iRBeacon;
+        private Model3D _iRBeacon;
 
-		public Model3D IRBeacon
-		{
-			get { return _iRBeacon; }
-			set
-			{
-				_iRBeacon = value;
-				OnPropertyChanged();
-			}
-		}
+        public Model3D IRBeacon
+        {
+            get { return _iRBeacon; }
+            set
+            {
+                _iRBeacon = value;
+                OnPropertyChanged();
+            }
+        }
 
         private double _translateX;
 
@@ -130,23 +130,16 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
         private List<IRPlotViewModel> _irPlots = new List<IRPlotViewModel>()
         {
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue), Point = new Point3D(2.8, 0.5, 1.6) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow), Point = new Point3D(2.8, 0.5, -1.6) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red), Point = new Point3D(-3.3, 0.5, -1.6) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Green), Point = new Point3D(-3.3, 0.5, 0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue), Point = new Point3D(-3.3, 0.5, -1.6) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow), Point = new Point3D(-3.3, 0.5, 0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red), Point = new Point3D(2.8, 0.5, 1.6) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Green), Point = new Point3D(2.8, 0.5, -1.6) },
         };
 
 
         public ICollection<IRPlotViewModel> IRPlots
         {
             get { return _irPlots; }
-        }
-
-        private int _currentColorIdx;
-
-        public string CurrentColor
-        {
-            get { return GetKnownColorName(_irPlots[_currentColorIdx].Color.Color); }
         }
 
         private string _ir1;
@@ -202,88 +195,110 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         #endregion
 
         public MainWindowViewModel()
-		{
-			dispatcher = Dispatcher.CurrentDispatcher;
+        {
+            dispatcher = Dispatcher.CurrentDispatcher;
 
             InitializeWiimote();
-			InitializeWiimoteModel();
-			//InitializeLightSaberModel();
-			InitializeIRBeaconModel();
-		}
+            InitializeWiimoteModel();
+            //InitializeLightSaberModel();
+            InitializeIRBeaconModel();
+        }
 
-		private void InitializeWiimote()
-		{
-			var WiimoteCollection = new WiimoteCollection();
-			int index = 1;
+        private void InitializeWiimote()
+        {
+            var WiimoteCollection = new WiimoteCollection();
+            int index = 1;
 
-			try
-			{
-				WiimoteCollection.FindAllWiimotes();
-			}
-			catch (WiimoteNotFoundException ex)
-			{
-				MessageBox.Show(ex.Message, "WiimoteNotFound", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-			catch (WiimoteException ex)
-			{
-				MessageBox.Show(ex.Message, "WiimoteError", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
+            try
+            {
+                WiimoteCollection.FindAllWiimotes();
+            }
+            catch (WiimoteNotFoundException ex)
+            {
+                MessageBox.Show(ex.Message, "WiimoteNotFound", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (WiimoteException ex)
+            {
+                MessageBox.Show(ex.Message, "WiimoteError", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
-			foreach (Wiimote wm in WiimoteCollection)
-			{
-				wm.Connect();
-				wm.SetReportType(InputReport.IRExtensionAccel, IRSensitivity.Maximum, true);
-				wm.SetLEDs(index++);
-				
-				wm.WiimoteChanged += Wm_WiimoteChanged;
-			}
-		}
+            foreach (Wiimote wm in WiimoteCollection)
+            {
+                wm.Connect();
+                wm.SetReportType(InputReport.IRExtensionAccel, IRSensitivity.Maximum, true);
+                wm.SetLEDs(index++);
 
-		#region Wiimote IR camera
-		// Dimensions of the image taken by the IR camera
-		private const int _imageWidth = 1024;
-		private const int _imageHeight = 768;
-		// Camera intrinsic parameters. These weren't obtained from calibration but works well enough.
-		private const double _fx = 1700;
-		private const double _fy = 1700;
-		private const double _cx = _imageWidth / 2;
-		private const double _cy = _imageHeight / 2;
+                wm.WiimoteChanged += Wm_WiimoteChanged;
+            }
+        }
 
-        private bool _lastA;
-        private bool _lastB;
 
-		#endregion
+        #region Wiimote IR camera
+        // Dimensions of the image taken by the IR camera
+        private const int _imageWidth = 1024;
+        private const int _imageHeight = 768;
+        // Camera intrinsic parameters. These weren't obtained from calibration but works well enough.
+        private const double _fx = 1700;
+        private const double _fy = 1700;
+        private const double _cx = _imageWidth / 2;
+        private const double _cy = _imageHeight / 2;
 
-		private void Wm_WiimoteChanged(object sender, WiimoteChangedEventArgs e)
-		{
-			var sensors = e.WiimoteState.IRState.IRSensors;
+        #endregion
+
+        private void Wm_WiimoteChanged(object sender, WiimoteChangedEventArgs e)
+        {
+            var sensors = e.WiimoteState.IRState.IRSensors;
 
             IR1 = "IR1: " + sensors[0].RawPosition.ToString();
             IR2 = "IR2: " + sensors[1].RawPosition.ToString();
             IR3 = "IR3: " + sensors[2].RawPosition.ToString();
             IR4 = "IR4: " + sensors[3].RawPosition.ToString();
 
-            _irPlots[0].SetFromIRSensor(sensors[0]);
-            _irPlots[1].SetFromIRSensor(sensors[1]);
-            _irPlots[2].SetFromIRSensor(sensors[2]);
-            _irPlots[3].SetFromIRSensor(sensors[3]);
+            //Order image points counter clockwise to match object points
+            var imagePoints = Cv2.ConvexHull(sensors.Select(s => s.RawPosition).ToPoint2f().ToArray()).ToList();
 
+            //Get the origin point with the shortest distance
+            int shortestIdx = GetShortestDistanceIdx(imagePoints);
+
+            //the origin point with the shortest distance to the next one is the first (idx 0)
+            //auto rotate the idx found back to 0
+            while (shortestIdx > 0)
+            {
+                imagePoints.RotateLeft();
+                shortestIdx--;
+            }
+
+            //update ir plots position
+            for (int i = 0; i < imagePoints.Count; i++)
+                _irPlots[i].SetFromIRSensor(sensors.First(s => s.RawPosition.X == imagePoints[i].X &&
+                                                               s.RawPosition.Y == imagePoints[i].Y));
+            //if all sensors are found, update wiimote
             if (sensors.All(s => s.Found == true))
-			{
+            {
                 var rvec = new MatOfDouble(3, 1);
                 var tvec = new MatOfDouble(3, 1);
-                var objectPoints = InputArray.Create(_irPlots.Select(i => i.Point.ToPoint3f()).ToArray());
-				var imagePoints = InputArray.Create(sensors.Select(s => s.RawPosition).ToPoint2f().ToArray());
-				var intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
 
-                Cv2.SolvePnP(objectPoints, //led absolute position
-							 imagePoints, //positions from camera
-							 intrinsic,
-                             InputArray.Create(new Mat()), rvec, tvec);
+                var objectPoints = _irPlots.Select(i => i.Point.ToPoint3f()).ToArray();
+
+                var intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
+
+                try
+                {
+                    Cv2.SolvePnP(InputArray.Create(objectPoints), //led absolute position
+                                 InputArray.Create(imagePoints), //positions from camera
+                                 intrinsic,
+                                 InputArray.Create(new Mat()), rvec, tvec);
+                }
+                catch (OpenCvSharp.OpenCVException)
+                {
+                    //log
+                    return;
+                }
+
 
                 var rvecIdxer = rvec.GetIndexer();
                 var tvecIdxer = tvec.GetIndexer();
-                
+
                 TranslateX = tvecIdxer[0];
                 TranslateY = tvecIdxer[1];
                 TranslateZ = tvecIdxer[2];
@@ -293,76 +308,86 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                 RotZ = rvecIdxer[2] * (180 / Math.PI);
 
             }
+        }
 
-            if (_lastA == true && e.WiimoteState.ButtonState.A == false)
+        private static int GetShortestDistanceIdx(List<Point2f> imagePoints)
+        {
+            double shortestDist = double.MaxValue;
+            int shortestIdx = -1;
+
+            for (int idx = 0; idx < imagePoints.Count; idx++)
             {
-                _currentColorIdx = _currentColorIdx == 3 ? 0 : _currentColorIdx + 1;
-                OnPropertyChanged("CurrentColor");
+                int nextIdx = (idx + 1 == imagePoints.Count) ? 0 : idx + 1;
+                var dist = GetDistanceBetweenPoints(imagePoints[idx], imagePoints[nextIdx]);
+
+                if (dist < shortestDist)
+                {
+                    shortestDist = dist;
+                    shortestIdx = idx;
+                }
             }
-            _lastA = e.WiimoteState.ButtonState.A;
 
-            if (_lastB == true && e.WiimoteState.ButtonState.B == false)
-            {
-                var irPlot = _irPlots[_currentColorIdx];
-                _irPlots.RemoveAt(_currentColorIdx);
-                _currentColorIdx = _currentColorIdx == 3 ? 0 : _currentColorIdx + 1;
-                _irPlots.Insert(_currentColorIdx, irPlot);
-            }
-            _lastB = e.WiimoteState.ButtonState.B;
+            return shortestIdx;
+        }
 
-
+        public static double GetDistanceBetweenPoints(Point2f p, Point2f q)
+        {
+            double a = p.X - q.X;
+            double b = p.Y - q.Y;
+            double distance = Math.Sqrt(a * a + b * b);
+            return distance;
         }
 
         private void InitializeIRBeaconModel()
-		{
-			var modelGroup = new Model3DGroup();
-			var meshBuilder = new MeshBuilder();
-			meshBuilder.AddBox(new Point3D(0, 0, 0), 8, 0.5, 6);
+        {
+            var modelGroup = new Model3DGroup();
+            var meshBuilder = new MeshBuilder();
+            meshBuilder.AddBox(new Point3D(0, 0, 0), 8, 0.5, 6);
 
-			var mesh = meshBuilder.ToMesh(true);
+            var mesh = meshBuilder.ToMesh(true);
 
-			var cardMaterial = MaterialHelper.CreateMaterial(Colors.WhiteSmoke);
-			modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = cardMaterial, BackMaterial = cardMaterial });
+            var cardMaterial = MaterialHelper.CreateMaterial(Colors.WhiteSmoke);
+            modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = cardMaterial, BackMaterial = cardMaterial });
 
-			meshBuilder = new MeshBuilder();
-			foreach (var ir in _irPlots)
-				meshBuilder.AddSphere(ir.Point, 0.2);
-			mesh = meshBuilder.ToMesh(true);
-			var ledMaterial = MaterialHelper.CreateMaterial(Colors.SteelBlue);
-			modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = ledMaterial, BackMaterial = ledMaterial });
+            meshBuilder = new MeshBuilder();
+            foreach (var ir in _irPlots)
+                meshBuilder.AddSphere(ir.Point, 0.2);
+            mesh = meshBuilder.ToMesh(true);
+            var ledMaterial = MaterialHelper.CreateMaterial(Colors.SteelBlue);
+            modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = ledMaterial, BackMaterial = ledMaterial });
 
             IRBeacon = modelGroup;
-		}
+        }
 
-		private async void InitializeLightSaberModel()
-		{
-			LightSaber = await LoadAsync("Assets/LightSaber/LightSaber.obj");
-			Material sabreMat = MaterialHelper.CreateImageMaterial("Assets/LightSaber/sabre.png", 1);
-			((GeometryModel3D)((Model3DGroup)LightSaber).Children[1]).Material = sabreMat;
+        private async void InitializeLightSaberModel()
+        {
+            LightSaber = await LoadAsync("Assets/LightSaber/LightSaber.obj");
+            Material sabreMat = MaterialHelper.CreateImageMaterial("Assets/LightSaber/sabre.png", 1);
+            ((GeometryModel3D)((Model3DGroup)LightSaber).Children[1]).Material = sabreMat;
         }
 
 
-		private async Task<Model3DGroup> LoadAsync(string model3DPath)
-		{
-			return await Task.Factory.StartNew(() =>
-			{
-				return new ModelImporter().Load(model3DPath, this.dispatcher);
-			});
-		}
+        private async Task<Model3DGroup> LoadAsync(string model3DPath)
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                return new ModelImporter().Load(model3DPath, this.dispatcher);
+            });
+        }
 
-		private void InitializeWiimoteModel()
-		{
+        private void InitializeWiimoteModel()
+        {
             var modelGroup = new Model3DGroup();
-			var meshBuilder = new MeshBuilder();
-			meshBuilder.AddBox(new Point3D(0, 0, 0), 3.5, 14.5, 3);
+            var meshBuilder = new MeshBuilder();
+            meshBuilder.AddBox(new Point3D(0, 0, 0), 3.5, 14.5, 3);
 
-			var mesh = meshBuilder.ToMesh(true);
+            var mesh = meshBuilder.ToMesh(true);
 
-			var whiteMaterial = MaterialHelper.CreateMaterial(Colors.White);
-			modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = whiteMaterial, BackMaterial = whiteMaterial });
+            var whiteMaterial = MaterialHelper.CreateMaterial(Colors.White);
+            modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = whiteMaterial, BackMaterial = whiteMaterial });
 
             Wiimote = modelGroup;
-		}
+        }
 
         public static string GetKnownColorName(Color clr)
         {

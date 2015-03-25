@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Viseo.WiiWars.WiimoteInSpace"
 		xmlns:wm="clr-namespace:Viseo.WiiWars.WiimoteInSpace.ViewModel"
-		xmlns:b="clr-namespace:Viseo.WiiWars.WiimoteInSpace.Behaviors"
 		xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="656"
@@ -27,7 +26,7 @@
                                       ShowViewCube="True"
                                       ShowCameraInfo="True"
                                       ShowCameraTarget="True"
-                                      CoordinateSystemLabelForeground="White"
+                                      CoordinateSystemLabelForeground="Black"
                                       CoordinateSystemLabelX="x"
                                       CoordinateSystemLabelY="y"
                                       CoordinateSystemLabelZ="z"
@@ -118,7 +117,6 @@
                 <TextBlock Text="{Binding IR3}" Grid.Column="1"  Grid.Row="2"/>
                 <TextBlock Text="{Binding IR4}" Grid.Column="1"  Grid.Row="3"/>
             </Grid>
-            <TextBlock Text="{Binding CurrentColor, StringFormat='Current Color : {0}'}" />
             <ItemsControl ItemsSource="{Binding IRPlots}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
