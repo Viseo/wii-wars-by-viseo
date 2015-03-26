@@ -32,25 +32,10 @@
                                       CoordinateSystemLabelZ="z"
                                       TextBrush="White">
             <HelixToolkit:SunLight/>
-            <ModelVisual3D Content="{Binding Wiimote}">
+            <ModelVisual3D Content="{Binding Model}">
                 <ModelVisual3D.Transform>
                     <Transform3DGroup>
                         <Transform3DGroup.Children>
-                            <RotateTransform3D>
-                                <RotateTransform3D.Rotation>
-                                    <AxisAngleRotation3D Axis="0,1,0" Angle="-90" />
-                                </RotateTransform3D.Rotation>
-                            </RotateTransform3D>
-                            <RotateTransform3D>
-                                <RotateTransform3D.Rotation>
-                                    <AxisAngleRotation3D Axis="1,0,0" Angle="90" />
-                                </RotateTransform3D.Rotation>
-                            </RotateTransform3D>
-                            <RotateTransform3D>
-                                <RotateTransform3D.Rotation>
-                                    <AxisAngleRotation3D Axis="0,1,0" Angle="-90" />
-                                </RotateTransform3D.Rotation>
-                            </RotateTransform3D>
                             <RotateTransform3D>
                                 <RotateTransform3D.Rotation>
                                     <AxisAngleRotation3D Axis="1,0,0" Angle="{Binding RotX}" />
@@ -71,7 +56,6 @@
                     </Transform3DGroup>
                 </ModelVisual3D.Transform>
             </ModelVisual3D>
-            <!--<ModelVisual3D Content="{Binding LightSaber}"/>-->
             <ModelVisual3D Content="{Binding IRBeacon}">
                 <ModelVisual3D.Transform>
                     <Transform3DGroup>
@@ -117,6 +101,7 @@
                 <TextBlock Text="{Binding IR3}" Grid.Column="1"  Grid.Row="2"/>
                 <TextBlock Text="{Binding IR4}" Grid.Column="1"  Grid.Row="3"/>
             </Grid>
+            <ComboBox ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedModel}" />
             <ItemsControl ItemsSource="{Binding IRPlots}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

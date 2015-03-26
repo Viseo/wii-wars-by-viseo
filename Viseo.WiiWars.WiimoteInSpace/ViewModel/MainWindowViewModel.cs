@@ -15,31 +15,21 @@ using System.Reflection;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
-    public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
+    public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, IDisposable
     {
         #region Properties
         private readonly Dispatcher dispatcher;
 
         private Model3D _wiimote;
-
-        public Model3D Wiimote
-        {
-            get { return _wiimote; }
-            set
-            {
-                _wiimote = value;
-                OnPropertyChanged();
-            }
-        }
-
         private Model3D _lightSaber;
+        private Model3D _model;
 
-        public Model3D LightSaber
+        public Model3D Model
         {
-            get { return _lightSaber; }
+            get { return _model; }
             set
             {
-                _lightSaber = value;
+                _model = value;
                 OnPropertyChanged();
             }
         }
@@ -190,6 +180,41 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
+        public enum E3DModel
+        {
+            Wiimote,
+            LightSaber
+        }
+
+        public IEnumerable<E3DModel> Models
+        {
+            get { return Enum.GetValues(typeof(E3DModel)).Cast<E3DModel>(); }
+        }
+
+        private E3DModel _selectedModel;
+
+        public E3DModel SelectedModel
+        {
+            get { return _selectedModel; }
+            set
+            {
+                _selectedModel = value;
+                OnPropertyChanged();
+
+                switch (SelectedModel)
+                {
+                    case E3DModel.Wiimote:
+                        Model = _wiimote;
+                        break;
+                    case E3DModel.LightSaber:
+                        Model = _lightSaber;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
 
 
         #endregion
@@ -200,8 +225,10 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
             InitializeWiimote();
             InitializeWiimoteModel();
-            //InitializeLightSaberModel();
+            InitializeLightSaberModel();
             InitializeIRBeaconModel();
+
+            SelectedModel = E3DModel.Wiimote;
         }
 
         private void InitializeWiimote()
@@ -215,11 +242,11 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
             catch (WiimoteNotFoundException ex)
             {
-                MessageBox.Show(ex.Message, "WiimoteNotFound", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, Properties.Resources.WiimoteNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (WiimoteException ex)
             {
-                MessageBox.Show(ex.Message, "WiimoteError", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, Properties.Resources.WiimoteError, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             foreach (Wiimote wm in WiimoteCollection)
@@ -242,6 +269,9 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private const double _fy = 1700;
         private const double _cx = _imageWidth / 2;
         private const double _cy = _imageHeight / 2;
+
+        private Mat _intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
+
 
         #endregion
 
@@ -275,38 +305,39 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             //if all sensors are found, update wiimote
             if (sensors.All(s => s.Found == true))
             {
-                var rvec = new MatOfDouble(3, 1);
-                var tvec = new MatOfDouble(3, 1);
-
                 var objectPoints = _irPlots.Select(i => i.Point.ToPoint3f()).ToArray();
 
-                var intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
-
-                try
+                using (var rvec = new MatOfDouble(3, 1))
+                using (var tvec = new MatOfDouble(3, 1))
+                using (var objectPointsArray = InputArray.Create(objectPoints))
+                using (var imagePointsArray = InputArray.Create(imagePoints))
+                using (var distCoeff = new Mat())
+                using (var distCoeffArray = InputArray.Create(distCoeff))
                 {
-                    Cv2.SolvePnP(InputArray.Create(objectPoints), //led absolute position
-                                 InputArray.Create(imagePoints), //positions from camera
-                                 intrinsic,
-                                 InputArray.Create(new Mat()), rvec, tvec);
+                    try
+                    {
+                        Cv2.SolvePnP(objectPointsArray, //led absolute position
+                                     imagePointsArray, //positions from camera
+                                     _intrinsic,
+                                     distCoeffArray, rvec, tvec);
+                    }
+                    catch (OpenCvSharp.OpenCVException)
+                    {
+                        //log
+                        return;
+                    }
+
+                    var rvecIdxer = rvec.GetIndexer();
+                    var tvecIdxer = tvec.GetIndexer();
+
+                    TranslateX = tvecIdxer[0];
+                    TranslateY = tvecIdxer[1];
+                    TranslateZ = tvecIdxer[2];
+
+                    RotX = rvecIdxer[0] * (180 / Math.PI);
+                    RotY = rvecIdxer[1] * (180 / Math.PI);
+                    RotZ = rvecIdxer[2] * (180 / Math.PI);
                 }
-                catch (OpenCvSharp.OpenCVException)
-                {
-                    //log
-                    return;
-                }
-
-
-                var rvecIdxer = rvec.GetIndexer();
-                var tvecIdxer = tvec.GetIndexer();
-
-                TranslateX = tvecIdxer[0];
-                TranslateY = tvecIdxer[1];
-                TranslateZ = tvecIdxer[2];
-
-                RotX = rvecIdxer[0] * (180 / Math.PI);
-                RotY = rvecIdxer[1] * (180 / Math.PI);
-                RotZ = rvecIdxer[2] * (180 / Math.PI);
-
             }
         }
 
@@ -361,9 +392,16 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
         private async void InitializeLightSaberModel()
         {
-            LightSaber = await LoadAsync("Assets/LightSaber/LightSaber.obj");
+            _lightSaber = await LoadAsync("Assets/LightSaber/LightSaber.obj");
             Material sabreMat = MaterialHelper.CreateImageMaterial("Assets/LightSaber/sabre.png", 1);
-            ((GeometryModel3D)((Model3DGroup)LightSaber).Children[1]).Material = sabreMat;
+            ((GeometryModel3D)((Model3DGroup)_lightSaber).Children[1]).Material = sabreMat;
+
+            var transform = new Transform3DGroup();
+            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
+            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 90)));
+            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
+
+            _lightSaber.Transform = transform;
         }
 
 
@@ -383,10 +421,15 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
             var mesh = meshBuilder.ToMesh(true);
 
-            var whiteMaterial = MaterialHelper.CreateMaterial(Colors.White);
-            modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = whiteMaterial, BackMaterial = whiteMaterial });
+            var transform = new Transform3DGroup();
+            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
+            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 90)));
+            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
 
-            Wiimote = modelGroup;
+            var whiteMaterial = MaterialHelper.CreateMaterial(Colors.White);
+            modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = whiteMaterial, BackMaterial = whiteMaterial, Transform = transform });
+            
+            _wiimote = modelGroup;
         }
 
         public static string GetKnownColorName(Color clr)
@@ -408,5 +451,9 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             return string.Empty;
         }
 
+        public void Dispose()
+        {
+            _intrinsic.Dispose();
+        }
     }
 }

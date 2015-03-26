@@ -186,9 +186,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\LightSaber\sabre.png">
+    <Content Include="Assets\LightSaber\sabre.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </Content>
     <Resource Include="Assets\LightSaber\sabre_ao.png" />
     <Resource Include="Assets\LightSaber\sabre_b.png" />
     <Resource Include="Assets\LightSaber\sabre_s.png" />

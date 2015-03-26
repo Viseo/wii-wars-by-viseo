@@ -10,6 +10,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.Helper
     {
         public static void RotateLeft<T>(this IList<T> list)
         {
+            if (list == null)
+                throw new ArgumentNullException("list");
+
+            if (list.Count < 2)
+                return;
+
             var value = list[0];
             list.RemoveAt(0);
             list.Insert(list.Count, value);
@@ -17,6 +23,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.Helper
 
         public static void RotateRight<T>(this IList<T> list)
         {
+            if (list == null)
+                throw new ArgumentNullException("list");
+
+            if (list.Count < 2)
+                return;
+
             var value = list[list.Count - 1];
             list.RemoveAt(list.Count - 1);
             list.Insert(0, value);
