@@ -118,6 +118,19 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
+        private Point3D _rotCenter;
+
+        public Point3D RotCenter
+        {
+            get { return _rotCenter; }
+            set
+            {
+                _rotCenter = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         private List<IRPlotViewModel> _irPlots = new List<IRPlotViewModel>()
         {
             new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue), Point = new Point3D(-3.3, 0.5, -1.6) },
@@ -205,6 +218,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                 {
                     case E3DModel.Wiimote:
                         Model = _wiimote;
+                        RotCenter = new Point3D(0, 0, 0);
                         break;
                     case E3DModel.LightSaber:
                         Model = _lightSaber;
