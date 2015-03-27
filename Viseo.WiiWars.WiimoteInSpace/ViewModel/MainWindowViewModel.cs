@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -12,12 +11,139 @@ using WiimoteLib;
 using OpenCvSharp.CPlusPlus;
 using Viseo.WiiWars.WiimoteInSpace.Helper;
 using System.Reflection;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using AForge.Video.DirectShow;
+using System.Threading;
+using AForge.Video;
+using System.Drawing;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
     public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, IDisposable
     {
         #region Properties
+        private FilterInfoCollection _videoDevices;
+        private VideoCaptureDevice _videoSource;
+        private readonly SynchronizationContext _synchronizationContext;
+        private List<FilterInfo> _devices;
+        private FilterInfo _selectedDevice;
+        private BitmapImage _currentImage;
+        private BitmapImage _videoButtonImage;
+        private ICommand _startStopVideoFeedCommand;
+
+        public BitmapImage VideoButtonImage
+        {
+            get { return _videoButtonImage; }
+            set
+            {
+                _videoButtonImage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICollection<FilterInfo> Devices
+        {
+            get { return _devices; }
+            private set
+            {
+                _devices = (List<FilterInfo>)value;
+                OnPropertyChanged();
+            }
+        }
+
+        public FilterInfo SelectedDevice
+        {
+            get { return _selectedDevice; }
+            set
+            {
+                _selectedDevice = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public BitmapImage CurrentImage
+        {
+            get { return _currentImage; }
+            set
+            {
+                _currentImage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand StartStopVideoFeedCommand
+        {
+            get { return _startStopVideoFeedCommand ?? (_startStopVideoFeedCommand = new RelayCommand(StartStopVideoFeed)); }
+        }
+
+        private void StartStopVideoFeed()
+        {
+            if (SelectedDevice == null)
+                return;
+
+            if (_videoSource != null && _videoSource.IsRunning)
+            {
+                Stop();
+            }
+            else
+            {
+                Start();
+            }
+        }
+
+
+        private void Start()
+        {
+            CloseVideoSource();
+            
+            _videoSource = new VideoCaptureDevice(SelectedDevice.MonikerString);
+            VideoButtonImage = Application.Current.Resources["StopImage"] as BitmapImage;
+            _videoSource.NewFrame += OnNewFrameReceived;
+            _videoSource.Start();
+        }
+
+        private void OnNewFrameReceived(object sender, NewFrameEventArgs eventArgs)
+        {
+            var img = (Bitmap)eventArgs.Frame.Clone();
+            
+            _synchronizationContext.Post(o =>
+            {
+                CurrentImage = BitmapConverter.ToBitmapImage(img);
+            }, null);
+        }
+
+        private void Stop()
+        {
+            CloseVideoSource();
+            VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
+            CurrentImage = null;
+        }
+
+        private void CloseVideoSource()
+        {
+            if (_videoSource == null) return;
+            if (!_videoSource.IsRunning) return;
+            _videoSource.SignalToStop();
+            _synchronizationContext.Post(o =>
+            {
+                CurrentImage = null;
+            }, null);
+        }
+
+        private void InitializeWebCamList()
+        {
+            SelectedDevice = null;
+            Devices = null;
+
+            _videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+            if (_videoDevices.Count == 0)
+                return;
+
+            Devices = _videoDevices.Cast<FilterInfo>().ToList();
+            SelectedDevice = Devices.First();
+        }
+
         private readonly Dispatcher dispatcher;
 
         private Model3D _wiimote;
@@ -130,6 +256,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
+        public WiimoteCollection WiimoteCollection { get; private set; }
 
         private List<IRPlotViewModel> _irPlots = new List<IRPlotViewModel>()
         {
@@ -236,18 +363,21 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         public MainWindowViewModel()
         {
             dispatcher = Dispatcher.CurrentDispatcher;
+            _synchronizationContext = SynchronizationContext.Current;
+            VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
 
             InitializeWiimote();
             InitializeWiimoteModel();
             InitializeLightSaberModel();
             InitializeIRBeaconModel();
+            InitializeWebCamList();
 
             SelectedModel = E3DModel.Wiimote;
         }
 
         private void InitializeWiimote()
         {
-            var WiimoteCollection = new WiimoteCollection();
+            WiimoteCollection = new WiimoteCollection();
             int index = 1;
 
             try
@@ -446,28 +576,13 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             _wiimote = modelGroup;
         }
 
-        public static string GetKnownColorName(Color clr)
-        {
-            Color clrKnownColor;
-
-            //Use reflection to get all known colors
-            Type ColorType = typeof(System.Windows.Media.Colors);
-            PropertyInfo[] arrPiColors = ColorType.GetProperties(BindingFlags.Public | BindingFlags.Static);
-
-            //Iterate over all known colors, convert each to a <Color> and then compare
-            //that color to the passed color.
-            foreach (PropertyInfo pi in arrPiColors)
-            {
-                clrKnownColor = (Color)pi.GetValue(null, null);
-                if (clrKnownColor == clr) return pi.Name;
-            }
-
-            return string.Empty;
-        }
-
         public void Dispose()
         {
             _intrinsic.Dispose();
+            foreach (Wiimote wm in WiimoteCollection)
+                wm.Disconnect();
+            CloseVideoSource();
+            GC.SuppressFinalize(this);
         }
     }
 }

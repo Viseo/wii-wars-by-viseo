@@ -79,6 +79,15 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AForge">
+      <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video">
+      <HintPath>..\packages\AForge.Video.2.2.5\lib\AForge.Video.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.DirectShow">
+      <HintPath>..\packages\AForge.Video.DirectShow.2.2.5\lib\AForge.Video.DirectShow.dll</HintPath>
+    </Reference>
     <Reference Include="HelixToolkit, Version=2015.1.475.0, Culture=neutral, PublicKeyToken=52aa3500039caf0d, processorArchitecture=MSIL">
       <HintPath>..\packages\HelixToolkit.2015.1.475\lib\portable-net4+sl4+wp71+win8\HelixToolkit.dll</HintPath>
       <Private>True</Private>
@@ -109,6 +118,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -139,6 +149,7 @@
     </Compile>
     <Compile Include="Helper\ListHelper.cs" />
     <Compile Include="Helper\OpenCVHelper.cs" />
+    <Compile Include="ViewModel\BitmapConverter.cs" />
     <Compile Include="ViewModel\DesignMainWindowViewModel.cs" />
     <Compile Include="ViewModel\IMainWindowViewModel.cs" />
     <Compile Include="ViewModel\IRPlotViewModel.cs" />
@@ -197,6 +208,8 @@
     <Resource Include="Assets\LightSaber\unbuilt_sabre_a.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\start.png" />
+    <Resource Include="Assets\stop.png" />
     <Content Include="dll\x64\msvcp110.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

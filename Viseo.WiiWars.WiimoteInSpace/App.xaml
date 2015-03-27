@@ -4,5 +4,7 @@
              xmlns:local="clr-namespace:Viseo.WiiWars.WiimoteInSpace"
              StartupUri="View/MainWindow.xaml">
 	<Application.Resources>
-	</Application.Resources>
+        <BitmapImage UriSource="Assets/start.png" x:Key="StartImage" />
+        <BitmapImage UriSource="Assets/stop.png" x:Key="StopImage" />
+    </Application.Resources>
 </Application>
