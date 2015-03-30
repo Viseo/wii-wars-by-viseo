@@ -106,11 +106,48 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private void OnNewFrameReceived(object sender, NewFrameEventArgs eventArgs)
         {
             var img = (Bitmap)eventArgs.Frame.Clone();
-            
+            var width = img.Width;
             _synchronizationContext.Post(o =>
             {
                 CurrentImage = BitmapConverter.ToBitmapImage(img);
             }, null);
+
+
+            //var arImage = GetAugmentedImage(width);
+            //_synchronizationContext.Post(o =>
+            //{
+            //    ARImage = arImage;
+            //}, null);
+        }
+
+        private BitmapSource _arImage;
+
+        public BitmapSource ARImage
+        {
+            get { return _arImage; }
+            set
+            {
+                _arImage = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        public event EventHandler<NotificationEventArgs<int, BitmapSource>> GetViewPortImage;
+
+        private BitmapSource GetAugmentedImage(int width)
+        {
+            if (GetViewPortImage != null)
+                GetViewPortImage(this, new NotificationEventArgs<int, BitmapSource>(String.Empty, width, SetViewPortImage));
+
+            return _viewPortImage;
+        }
+
+        BitmapSource _viewPortImage;
+
+        private void SetViewPortImage(BitmapSource image)
+        {
+            _viewPortImage = image;
         }
 
         private void Stop()
@@ -156,6 +193,16 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _model = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Model3D LightSaber
+        {
+            get { return _lightSaber; }
+            set
+            {
+                _lightSaber = value;
                 OnPropertyChanged();
             }
         }
@@ -255,6 +302,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                 OnPropertyChanged();
             }
         }
+
 
         public WiimoteCollection WiimoteCollection { get; private set; }
 
@@ -546,6 +594,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
 
             _lightSaber.Transform = transform;
+            LightSaber = _lightSaber;
         }
 
 

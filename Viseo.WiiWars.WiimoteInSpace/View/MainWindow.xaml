@@ -20,7 +20,37 @@
         <Border BorderBrush="Black" BorderThickness="1" Margin="10">
             <Image Source="{Binding CurrentImage}" Width="600" RenderOptions.BitmapScalingMode="Linear" />
         </Border>
-        <Canvas Name="ARFeed" Margin="5" Width="{Binding CurrentImage.Width}" Height="{Binding CurrentImage.Height}" />
+        <!--<Image Source="{Binding ARImage}" Width="{Binding CurrentImage.Width}" Height="{Binding CurrentImage.Height}" />-->
+        <HelixToolkit:HelixViewport3D Width="{Binding CurrentImage.Width}" Height="{Binding CurrentImage.Height}"
+                                      ShowViewCube="False"
+                                      Name="ARViewport"
+                                      CameraChanged="ARViewport_CameraChanged">
+            <HelixToolkit:SunLight/>
+            <ModelVisual3D Content="{Binding LightSaber}">
+                <ModelVisual3D.Transform>
+                    <Transform3DGroup>
+                        <Transform3DGroup.Children>
+                            <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="1,0,0" Angle="{Binding RotX}" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="0,1,0" Angle="{Binding RotY}" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
+                                <RotateTransform3D.Rotation>
+                                    <AxisAngleRotation3D Axis="0,0,1" Angle="{Binding RotZ}" />
+                                </RotateTransform3D.Rotation>
+                            </RotateTransform3D>
+                            <TranslateTransform3D OffsetX="{Binding TranslateX}" OffsetY="{Binding TranslateY}" OffsetZ="{Binding TranslateZ}" />
+                        </Transform3DGroup.Children>
+                    </Transform3DGroup>
+                </ModelVisual3D.Transform>
+            </ModelVisual3D>
+        </HelixToolkit:HelixViewport3D>
         <StackPanel Grid.Column="1">
             <StackPanel Orientation="Horizontal">
                 <ComboBox ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" Width="200" Margin="5" HorizontalAlignment="Left">
@@ -79,6 +109,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            
             <HelixToolkit:HelixViewport3D ShowFrameRate="True" 
                                       InfiniteSpin="true" 
                                       IsHeadLightEnabled="True"
@@ -94,7 +125,9 @@
                                       CoordinateSystemLabelZ="z"
                                       TextBrush="White"
                                       Width="384"
-                                      Height="288">
+                                      Height="288"
+                                      Name="DebugViewport"
+                                      CameraChanged="DebugViewport_CameraChanged">
                 <HelixToolkit:SunLight/>
                 <ModelVisual3D Content="{Binding Model}">
                     <ModelVisual3D.Transform>
