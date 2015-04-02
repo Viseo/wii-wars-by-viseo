@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Viseo.WiiWars.WiimoteInSpace
 {
-	public abstract class ViewModelBase : INotifyPropertyChanged
+	public abstract class NotifierBase : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 

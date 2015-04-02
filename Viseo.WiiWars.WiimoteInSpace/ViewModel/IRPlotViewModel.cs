@@ -6,7 +6,7 @@ using WiimoteLib;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
-	public class IRPlotViewModel : ViewModelBase
+	public class IRPlotViewModel : NotifierBase
 	{
 		private double _x;
 

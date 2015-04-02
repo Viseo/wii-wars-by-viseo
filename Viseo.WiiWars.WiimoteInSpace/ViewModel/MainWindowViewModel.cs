@@ -17,10 +17,11 @@ using AForge.Video.DirectShow;
 using System.Threading;
 using AForge.Video;
 using System.Drawing;
+using Viseo.WiiWars.WiimoteInSpace.WebAPI.DAL;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
-    public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, IDisposable
+    public sealed class MainWindowViewModel : NotifierBase, IMainWindowViewModel, IDisposable
     {
         #region Properties
         private FilterInfoCollection _videoDevices;
@@ -31,6 +32,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private BitmapImage _currentImage;
         private BitmapImage _videoButtonImage;
         private ICommand _startStopVideoFeedCommand;
+        private bool _videoEnabled;
 
         public BitmapImage VideoButtonImage
         {
@@ -101,6 +103,8 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             VideoButtonImage = Application.Current.Resources["StopImage"] as BitmapImage;
             _videoSource.NewFrame += OnNewFrameReceived;
             _videoSource.Start();
+            _videoEnabled = true;
+            SetModelAR(_saberRepository.Get(1));
         }
 
         private void OnNewFrameReceived(object sender, NewFrameEventArgs eventArgs)
@@ -118,6 +122,39 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             //{
             //    ARImage = arImage;
             //}, null);
+        }
+
+        private void Stop()
+        {
+            CloseVideoSource();
+            VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
+            CurrentImage = null;
+            _videoEnabled = false;
+            SetModelAR(_saberRepository.Get(1));
+        }
+
+        private void CloseVideoSource()
+        {
+            if (_videoSource == null) return;
+            if (!_videoSource.IsRunning) return;
+            _videoSource.SignalToStop();
+            _synchronizationContext.Post(o =>
+            {
+                CurrentImage = null;
+            }, null);
+        }
+
+        private void InitializeWebCamList()
+        {
+            SelectedDevice = null;
+            Devices = null;
+
+            _videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+            if (_videoDevices.Count == 0)
+                return;
+
+            Devices = _videoDevices.Cast<FilterInfo>().ToList();
+            SelectedDevice = Devices.First();
         }
 
         private BitmapSource _arImage;
@@ -150,42 +187,14 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             _viewPortImage = image;
         }
 
-        private void Stop()
-        {
-            CloseVideoSource();
-            VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
-            CurrentImage = null;
-        }
-
-        private void CloseVideoSource()
-        {
-            if (_videoSource == null) return;
-            if (!_videoSource.IsRunning) return;
-            _videoSource.SignalToStop();
-            _synchronizationContext.Post(o =>
-            {
-                CurrentImage = null;
-            }, null);
-        }
-
-        private void InitializeWebCamList()
-        {
-            SelectedDevice = null;
-            Devices = null;
-
-            _videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
-            if (_videoDevices.Count == 0)
-                return;
-
-            Devices = _videoDevices.Cast<FilterInfo>().ToList();
-            SelectedDevice = Devices.First();
-        }
 
         private readonly Dispatcher dispatcher;
 
         private Model3D _wiimote;
         private Model3D _lightSaber;
+        private Model3D _lightSaberOff;
         private Model3D _model;
+        private Model3D _modelAR;
 
         public Model3D Model
         {
@@ -197,12 +206,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
-        public Model3D LightSaber
+        public Model3D ModelAR
         {
-            get { return _lightSaber; }
+            get { return _modelAR; }
             set
             {
-                _lightSaber = value;
+                _modelAR = value;
                 OnPropertyChanged();
             }
         }
@@ -408,8 +417,16 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
         #endregion
 
+        private WebAPI.Server _server;
+        private SaberRepository _saberRepository;
+
         public MainWindowViewModel()
         {
+            _server = new WebAPI.Server();
+            _server.Start();
+
+            _saberRepository = SaberRepository.Instance;
+
             dispatcher = Dispatcher.CurrentDispatcher;
             _synchronizationContext = SynchronizationContext.Current;
             VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
@@ -448,6 +465,29 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                 wm.SetLEDs(index++);
 
                 wm.WiimoteChanged += Wm_WiimoteChanged;
+
+                var saber = new Models.Saber() { Color = WiimoteInSpace.Models.Saber.SaberColor.Blue, IsOn = false };
+                saber.PropertyChanged += Saber_PropertyChanged;
+                _saberRepository.Add(saber);
+
+            }
+        }
+
+        private void Saber_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsOn")
+            {
+                SetModelAR((Models.Saber)sender);
+            }
+        }
+
+        private void SetModelAR(Models.Saber saber)
+        {
+            if (!_videoEnabled)
+                ModelAR = null;
+            else
+            {
+                ModelAR = saber.IsOn ? _lightSaber : _lightSaberOff;
             }
         }
 
@@ -463,7 +503,8 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private const double _cy = _imageHeight / 2;
 
         private Mat _intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
-
+        private bool _lastA = false;
+        private bool _lastHome = false;
 
         #endregion
 
@@ -531,6 +572,19 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                     RotZ = rvecIdxer[2] * (180 / Math.PI);
                 }
             }
+
+            if (_lastA == false && e.WiimoteState.ButtonState.A == true)
+            {
+                _saberRepository.Get(1).IsOn = !_saberRepository.Get(1).IsOn;
+            }
+            _lastA = e.WiimoteState.ButtonState.A;
+
+
+            if (_lastHome == false && e.WiimoteState.ButtonState.Home == true)
+            {
+                //dispatcher.Invoke(() => )
+            }
+            _lastHome = e.WiimoteState.ButtonState.Home;
         }
 
         private static int GetShortestDistanceIdx(List<Point2f> imagePoints)
@@ -585,8 +639,10 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private async void InitializeLightSaberModel()
         {
             _lightSaber = await LoadAsync("Assets/LightSaber/LightSaber.obj");
+            _lightSaberOff = await LoadAsync("Assets/LightSaber/LightSaberOff.obj");
             Material sabreMat = MaterialHelper.CreateImageMaterial("Assets/LightSaber/sabre.png", 1);
             ((GeometryModel3D)((Model3DGroup)_lightSaber).Children[1]).Material = sabreMat;
+            ((GeometryModel3D)((Model3DGroup)_lightSaberOff).Children[0]).Material = sabreMat;
 
             var transform = new Transform3DGroup();
             transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
@@ -594,7 +650,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
 
             _lightSaber.Transform = transform;
-            LightSaber = _lightSaber;
+            _lightSaberOff.Transform = transform;
         }
 
 
@@ -631,6 +687,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             foreach (Wiimote wm in WiimoteCollection)
                 wm.Disconnect();
             CloseVideoSource();
+            _server.Dispose();
             GC.SuppressFinalize(this);
         }
     }

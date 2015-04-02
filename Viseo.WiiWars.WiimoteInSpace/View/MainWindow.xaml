@@ -26,7 +26,7 @@
                                       Name="ARViewport"
                                       CameraChanged="ARViewport_CameraChanged">
             <HelixToolkit:SunLight/>
-            <ModelVisual3D Content="{Binding LightSaber}">
+            <ModelVisual3D Content="{Binding ModelAR}">
                 <ModelVisual3D.Transform>
                     <Transform3DGroup>
                         <Transform3DGroup.Children>
