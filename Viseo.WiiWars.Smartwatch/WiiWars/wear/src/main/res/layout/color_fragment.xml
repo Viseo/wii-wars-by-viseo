@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context=".WearActivity" tools:deviceIds="wear_round">
+
+    <TextView android:id="@+id/text" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/colorfragment_title"
+        android:layout_above="@+id/btnRed"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="26dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_red"
+        android:id="@+id/btnRed"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/btnGreen" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_blue"
+        android:id="@+id/btnBlue"
+        android:layout_alignTop="@+id/btnRed"
+        android:layout_toEndOf="@+id/btnGreen" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_green"
+        android:id="@+id/btnGreen"
+        android:layout_alignTop="@+id/btnRed"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
