@@ -9,18 +9,14 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="768" Width="1024"
         d:DataContext="{d:DesignInstance Type=wm:DesignMainWindowViewModel, IsDesignTimeCreatable=True}">
-    <Window.DataContext>
-        <wm:MainWindowViewModel />
-    </Window.DataContext>
     <Grid Name="Container">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Border BorderBrush="Black" BorderThickness="1" Margin="10">
-            <Image Source="{Binding CurrentImage}" Width="600" RenderOptions.BitmapScalingMode="Linear" />
+            <Image Source="{Binding CurrentImage}" Width="800" RenderOptions.BitmapScalingMode="Linear" />
         </Border>
-        <!--<Image Source="{Binding ARImage}" Width="{Binding CurrentImage.Width}" Height="{Binding CurrentImage.Height}" />-->
         <HelixToolkit:HelixViewport3D Width="{Binding CurrentImage.Width}" Height="{Binding CurrentImage.Height}"
                                       ShowViewCube="False"
                                       Name="ARViewport"

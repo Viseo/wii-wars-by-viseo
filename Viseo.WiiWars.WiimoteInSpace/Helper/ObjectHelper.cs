@@ -16,9 +16,11 @@ namespace Viseo.WiiWars.WiimoteInSpace.Helper
         /// <param name="destination">The destination.</param>
         public static void CopyProperties(this object source, object destination)
         {
-            // If any this null throw an exception
-            if (source == null || destination == null)
-                throw new Exception("Source or/and Destination Objects are null");
+            if (source == null)
+                throw new ArgumentNullException("source");
+            if (destination == null)
+                throw new ArgumentNullException("destination");
+
             // Getting the Types of the objects
             Type typeDest = destination.GetType();
             Type typeSrc = source.GetType();

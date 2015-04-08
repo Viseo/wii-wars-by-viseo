@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using Viseo.WiiWars.WiimoteInSpace.Models;
-using Viseo.WiiWars.WiimoteInSpace.WebAPI.DAL;
+using Viseo.WiiWars.WiimoteInSpace.WebApi.Dal;
 
-namespace Viseo.WiiWars.WiimoteInSpace.WebAPI.Controllers
+namespace Viseo.WiiWars.WiimoteInSpace.WebApi.Controllers
 {
-    //[Route("api/[controller]")]
     public class SaberController : ApiController
     {
         private ISaberRepository _saberRepository;
@@ -51,6 +51,36 @@ namespace Viseo.WiiWars.WiimoteInSpace.WebAPI.Controllers
             if (saber != null && saber.IsOn == true)
             {
                 saber.IsOn = false;
+                return true;
+            }
+            return false;
+        }
+
+        [ActionName("ChangeColorGreen")]
+        [HttpGet]
+        public bool ChangeColorGreen(int id)
+        {
+            return ChangeColor(id, Models.Saber.SaberColor.Green);
+        }
+        [ActionName("ChangeColorRed")]
+        [HttpGet]
+        public bool ChangeColorRed(int id)
+        {
+            return ChangeColor(id, Models.Saber.SaberColor.Red);
+        }
+        [ActionName("ChangeColorBlue")]
+        [HttpGet]
+        public bool ChangeColorBlue(int id)
+        {
+            return ChangeColor(id, Models.Saber.SaberColor.Blue);
+        }
+
+        private bool ChangeColor(int id, Saber.SaberColor color)
+        {
+            var saber = _saberRepository.Get(id);
+            if (saber != null)
+            {
+                saber.Color = color;
                 return true;
             }
             return false;

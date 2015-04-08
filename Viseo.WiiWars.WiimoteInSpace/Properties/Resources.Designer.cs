@@ -61,7 +61,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://10.33.120.169:9000/.
+        ///   Looks up a localized string similar to http://inv010581:9000/.
         /// </summary>
         internal static string BaseAddress {
             get {
@@ -72,9 +72,9 @@ namespace Viseo.WiiWars.WiimoteInSpace.Properties {
         /// <summary>
         ///   Looks up a localized string similar to http://viseo-wii-wars-dev-noeu-websites.azurewebsites.net.
         /// </summary>
-        internal static string WebAPIAddress {
+        internal static string WebApiAddress {
             get {
-                return ResourceManager.GetString("WebAPIAddress", resourceCulture);
+                return ResourceManager.GetString("WebApiAddress", resourceCulture);
             }
         }
         

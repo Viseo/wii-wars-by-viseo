@@ -17,7 +17,7 @@ using AForge.Video.DirectShow;
 using System.Threading;
 using AForge.Video;
 using System.Drawing;
-using Viseo.WiiWars.WiimoteInSpace.WebAPI.DAL;
+using Viseo.WiiWars.WiimoteInSpace.WebApi.Dal;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
@@ -110,7 +110,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private void OnNewFrameReceived(object sender, NewFrameEventArgs eventArgs)
         {
             var img = (Bitmap)eventArgs.Frame.Clone();
-            var width = img.Width;
+            //var width = img.Width;
             _synchronizationContext.Post(o =>
             {
                 CurrentImage = BitmapConverter.ToBitmapImage(img);
@@ -170,22 +170,23 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         }
 
 
-        public event EventHandler<NotificationEventArgs<int, BitmapSource>> GetViewPortImage;
+        //Use for compositing
+        //public event EventHandler<NotificationEventArgs<int, BitmapSource>> GetViewportImage;
 
-        private BitmapSource GetAugmentedImage(int width)
-        {
-            if (GetViewPortImage != null)
-                GetViewPortImage(this, new NotificationEventArgs<int, BitmapSource>(String.Empty, width, SetViewPortImage));
+        //private BitmapSource GetAugmentedImage(int width)
+        //{
+        //    if (GetViewportImage != null)
+        //        GetViewportImage(this, new NotificationEventArgs<int, BitmapSource>(String.Empty, width, SetViewPortImage));
 
-            return _viewPortImage;
-        }
+        //    return _viewPortImage;
+        //}
 
-        BitmapSource _viewPortImage;
+        //BitmapSource _viewPortImage;
 
-        private void SetViewPortImage(BitmapSource image)
-        {
-            _viewPortImage = image;
-        }
+        //private void SetViewPortImage(BitmapSource image)
+        //{
+        //    _viewPortImage = image;
+        //}
 
 
         private readonly Dispatcher dispatcher;
@@ -383,7 +384,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             LightSaber
         }
 
-        public IEnumerable<E3DModel> Models
+        public static IEnumerable<E3DModel> Models
         {
             get { return Enum.GetValues(typeof(E3DModel)).Cast<E3DModel>(); }
         }
@@ -417,12 +418,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
         #endregion
 
-        private WebAPI.Server _server;
+        private WebApi.WebApiServer _server;
         private SaberRepository _saberRepository;
 
         public MainWindowViewModel()
         {
-            _server = new WebAPI.Server();
+            _server = new WebApi.WebApiServer();
             _server.Start();
 
             _saberRepository = SaberRepository.Instance;
@@ -473,11 +474,25 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
+        Dictionary<Models.Saber.SaberColor, Material> SaberMaterials = new Dictionary<WiimoteInSpace.Models.Saber.SaberColor, Material>()
+        {
+            { WiimoteInSpace.Models.Saber.SaberColor.Blue, MaterialHelper.CreateMaterial(Colors.Blue) },
+            { WiimoteInSpace.Models.Saber.SaberColor.Green, MaterialHelper.CreateMaterial(Colors.Green) },
+            { WiimoteInSpace.Models.Saber.SaberColor.Red, MaterialHelper.CreateMaterial(Colors.Red) },
+        };
+
         private void Saber_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsOn")
             {
                 SetModelAR((Models.Saber)sender);
+            }
+            if (e.PropertyName == "Color")
+            {
+                _synchronizationContext.Post(o =>
+                {
+                    ((GeometryModel3D)((Model3DGroup)_lightSaber).Children[0]).Material = SaberMaterials[((Models.Saber)sender).Color];
+                }, null);
             }
         }
 
@@ -505,6 +520,14 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private Mat _intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
         private bool _lastA = false;
         private bool _lastHome = false;
+
+        private const int avgDepth = 10;
+        private DoubleAverager _translateXAvg = new DoubleAverager(avgDepth);
+        private DoubleAverager _translateYAvg = new DoubleAverager(avgDepth);
+        private DoubleAverager _translateZAvg = new DoubleAverager(avgDepth);
+        private DoubleAverager _rotXAvg = new DoubleAverager(avgDepth);
+        private DoubleAverager _rotYAvg = new DoubleAverager(avgDepth);
+        private DoubleAverager _rotZAvg = new DoubleAverager(avgDepth);
 
         #endregion
 
@@ -563,13 +586,13 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                     var rvecIdxer = rvec.GetIndexer();
                     var tvecIdxer = tvec.GetIndexer();
 
-                    TranslateX = tvecIdxer[0];
-                    TranslateY = tvecIdxer[1];
-                    TranslateZ = tvecIdxer[2];
+                    TranslateX = _translateXAvg.Update(tvecIdxer[0]);
+                    TranslateY = _translateYAvg.Update(tvecIdxer[1]);
+                    TranslateZ = _translateZAvg.Update(tvecIdxer[2]);
 
-                    RotX = rvecIdxer[0] * (180 / Math.PI);
-                    RotY = rvecIdxer[1] * (180 / Math.PI);
-                    RotZ = rvecIdxer[2] * (180 / Math.PI);
+                    RotX = _rotXAvg.Update(rvecIdxer[0] * (180 / Math.PI));
+                    RotY = _rotYAvg.Update(rvecIdxer[1] * (180 / Math.PI));
+                    RotZ = _rotZAvg.Update(rvecIdxer[2] * (180 / Math.PI));
                 }
             }
 
@@ -582,7 +605,18 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
             if (_lastHome == false && e.WiimoteState.ButtonState.Home == true)
             {
-                //dispatcher.Invoke(() => )
+                //var transform = new Transform3DGroup();
+
+                //transform.Children.Add(new TranslateTransform3D(TranslateX, TranslateY, TranslateZ));
+                //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), RotX)));
+                //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), RotY)));
+                //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), RotZ)));
+
+                //dispatcher.Invoke(() =>
+                //{
+                //    _lightSaber.Transform = transform;
+                //    _lightSaberOff.Transform = transform;
+                //});
             }
             _lastHome = e.WiimoteState.ButtonState.Home;
         }
@@ -645,9 +679,11 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             ((GeometryModel3D)((Model3DGroup)_lightSaberOff).Children[0]).Material = sabreMat;
 
             var transform = new Transform3DGroup();
-            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
+            //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
+            //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 90)));
+            //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
+
             transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 90)));
-            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
 
             _lightSaber.Transform = transform;
             _lightSaberOff.Transform = transform;

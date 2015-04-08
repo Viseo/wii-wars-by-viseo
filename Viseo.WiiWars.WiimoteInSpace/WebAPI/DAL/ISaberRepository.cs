@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Viseo.WiiWars.WiimoteInSpace.Models;
 
-namespace Viseo.WiiWars.WiimoteInSpace.WebAPI.DAL
+namespace Viseo.WiiWars.WiimoteInSpace.WebApi.Dal
 {
     public interface ISaberRepository
     {

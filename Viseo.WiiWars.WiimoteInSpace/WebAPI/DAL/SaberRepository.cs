@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Viseo.WiiWars.WiimoteInSpace.Helper;
 using Viseo.WiiWars.WiimoteInSpace.Models;
 
-namespace Viseo.WiiWars.WiimoteInSpace.WebAPI.DAL
+namespace Viseo.WiiWars.WiimoteInSpace.WebApi.Dal
 {
     public class SaberRepository : ISaberRepository
     {
