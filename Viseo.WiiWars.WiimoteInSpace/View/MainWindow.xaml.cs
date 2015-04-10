@@ -17,9 +17,9 @@ namespace Viseo.WiiWars.WiimoteInSpace
             Application.Current.Exit += Current_Exit;
 
             DataContext = new MainWindowViewModel();
-            var vm = DataContext as MainWindowViewModel;
-            if (vm == null)
-                return;
+            //var vm = DataContext as MainWindowViewModel;
+            //if (vm == null)
+            //    return;
 
             //vm.GetViewportImage += GetViewPortImage;
         }
@@ -41,16 +41,6 @@ namespace Viseo.WiiWars.WiimoteInSpace
         void Current_Exit(object sender, ExitEventArgs e)
         {
             ((MainWindowViewModel)DataContext).Dispose();
-        }
-
-        private void ARViewport_CameraChanged(object sender, RoutedEventArgs e)
-        {
-            CameraHelper.Copy(ARViewport.Camera, DebugViewport.Camera);
-        }
-
-        private void DebugViewport_CameraChanged(object sender, RoutedEventArgs e)
-        {
-            CameraHelper.Copy(DebugViewport.Camera, ARViewport.Camera);
         }
     }
 }
