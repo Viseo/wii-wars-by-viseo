@@ -7,41 +7,26 @@
 		xmlns:wm="clr-namespace:Viseo.WiiWars.WiimoteInSpace.ViewModel"
 		xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="768" Width="1024"
-        d:DataContext="{d:DesignInstance Type=wm:DesignMainWindowViewModel, IsDesignTimeCreatable=True}">
+        Title="MainWindow" Height="768" Width="1365">
     <Grid Name="Container">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Border BorderBrush="Black" BorderThickness="1" Margin="10">
-            <Image Source="{Binding CurrentImage}" Width="800" RenderOptions.BitmapScalingMode="Linear" />
+            <Image Source="{Binding CurrentImage}" RenderOptions.BitmapScalingMode="Linear" />
         </Border>
-        <HelixToolkit:HelixViewport3D Width="{Binding CurrentImage.Width}" Height="{Binding CurrentImage.Height}"
-                                      ShowViewCube="False"
-                                      Name="ARViewport"
-                                      CameraChanged="ARViewport_CameraChanged">
+        <HelixToolkit:HelixViewport3D Width="640" Height="480"
+                                      ShowViewCube="False">
+            <HelixToolkit:HelixViewport3D.Camera>
+                <PerspectiveCamera x:Name="MainCamera" Position="-200, 0, 0"  LookDirection="200, 0, 0" UpDirection="0,0,-1" />
+            </HelixToolkit:HelixViewport3D.Camera>
             <HelixToolkit:SunLight/>
             <ModelVisual3D Content="{Binding ModelAR}">
                 <ModelVisual3D.Transform>
                     <Transform3DGroup>
                         <Transform3DGroup.Children>
-                            <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
-                                <RotateTransform3D.Rotation>
-                                    <AxisAngleRotation3D Axis="1,0,0" Angle="{Binding RotX}" />
-                                </RotateTransform3D.Rotation>
-                            </RotateTransform3D>
-                            <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
-                                <RotateTransform3D.Rotation>
-                                    <AxisAngleRotation3D Axis="0,1,0" Angle="{Binding RotY}" />
-                                </RotateTransform3D.Rotation>
-                            </RotateTransform3D>
-                            <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
-                                <RotateTransform3D.Rotation>
-                                    <AxisAngleRotation3D Axis="0,0,1" Angle="{Binding RotZ}" />
-                                </RotateTransform3D.Rotation>
-                            </RotateTransform3D>
-                            <TranslateTransform3D OffsetX="{Binding TranslateX}" OffsetY="{Binding TranslateY}" OffsetZ="{Binding TranslateZ}" />
+                            <MatrixTransform3D Matrix="{Binding TransformMatrix}" />
                         </Transform3DGroup.Children>
                     </Transform3DGroup>
                 </ModelVisual3D.Transform>
@@ -75,17 +60,18 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock Text="{Binding TranslateX, StringFormat='TranslateX: {0:0.0000}'}" Grid.Row="0" />
-                <TextBlock Text="{Binding TranslateY, StringFormat='TranslateY: {0:0.0000}'}" Grid.Row="1" />
-                <TextBlock Text="{Binding TranslateZ, StringFormat='TranslateZ: {0:0.0000}'}" Grid.Row="2" />
-                <TextBlock Text="{Binding RotX,       StringFormat='RotX      : {0:0.0000}'}" Grid.Row="3" />
-                <TextBlock Text="{Binding RotY,       StringFormat='RotY      : {0:0.0000}'}" Grid.Row="4" />
-                <TextBlock Text="{Binding RotZ,       StringFormat='RotZ      : {0:0.0000}'}" Grid.Row="5" />
+                <TextBlock Text="{Binding OcvTranslate.X, StringFormat='OcvTX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="0" />
+                <TextBlock Text="{Binding OcvTranslate.Y, StringFormat='OcvTY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="1" />
+                <TextBlock Text="{Binding OcvTranslate.Z, StringFormat='OcvTZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="2" />
+                <TextBlock Text="{Binding OcvRot.X,       StringFormat='OcvRX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="3" />
+                <TextBlock Text="{Binding OcvRot.Y,       StringFormat='OcvRY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="4" />
+                <TextBlock Text="{Binding OcvRot.Z,       StringFormat='OcvRZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="5" />
                 <TextBlock Text="{Binding IR1}" Grid.Column="1"  Grid.Row="0"/>
                 <TextBlock Text="{Binding IR2}" Grid.Column="1"  Grid.Row="1"/>
                 <TextBlock Text="{Binding IR3}" Grid.Column="1"  Grid.Row="2"/>
                 <TextBlock Text="{Binding IR4}" Grid.Column="1"  Grid.Row="3"/>
             </Grid>
+            
             <ComboBox ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedModel}" Width="256" HorizontalAlignment="Left" />
             <ItemsControl ItemsSource="{Binding IRPlots}" HorizontalAlignment="Left">
                 <ItemsControl.ItemsPanel>
@@ -121,52 +107,21 @@
                                       CoordinateSystemLabelZ="z"
                                       TextBrush="White"
                                       Width="384"
-                                      Height="288"
-                                      Name="DebugViewport"
-                                      CameraChanged="DebugViewport_CameraChanged">
+                                      Height="288">
+                <HelixToolkit:HelixViewport3D.Camera>
+                    <PerspectiveCamera Position="{Binding ElementName=MainCamera, Path=Position, Mode=TwoWay}"  LookDirection="{Binding ElementName=MainCamera, Path=LookDirection, Mode=TwoWay}" UpDirection="{Binding ElementName=MainCamera, Path=UpDirection, Mode=TwoWay}" />
+                </HelixToolkit:HelixViewport3D.Camera>
                 <HelixToolkit:SunLight/>
                 <ModelVisual3D Content="{Binding Model}">
                     <ModelVisual3D.Transform>
                         <Transform3DGroup>
                             <Transform3DGroup.Children>
-                                <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
-                                    <RotateTransform3D.Rotation>
-                                        <AxisAngleRotation3D Axis="1,0,0" Angle="{Binding RotX}" />
-                                    </RotateTransform3D.Rotation>
-                                </RotateTransform3D>
-                                <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
-                                    <RotateTransform3D.Rotation>
-                                        <AxisAngleRotation3D Axis="0,1,0" Angle="{Binding RotY}" />
-                                    </RotateTransform3D.Rotation>
-                                </RotateTransform3D>
-                                <RotateTransform3D CenterX="{Binding RotCenter.X}" CenterY="{Binding RotCenter.Y}" CenterZ="{Binding RotCenter.Z}">
-                                    <RotateTransform3D.Rotation>
-                                        <AxisAngleRotation3D Axis="0,0,1" Angle="{Binding RotZ}" />
-                                    </RotateTransform3D.Rotation>
-                                </RotateTransform3D>
-                                <TranslateTransform3D OffsetX="{Binding TranslateX}" OffsetY="{Binding TranslateY}" OffsetZ="{Binding TranslateZ}" />
+                                <MatrixTransform3D Matrix="{Binding TransformMatrix}" />
                             </Transform3DGroup.Children>
                         </Transform3DGroup>
                     </ModelVisual3D.Transform>
                 </ModelVisual3D>
-                <ModelVisual3D Content="{Binding IRBeacon}">
-                    <ModelVisual3D.Transform>
-                        <Transform3DGroup>
-                            <Transform3DGroup.Children>
-                                <RotateTransform3D>
-                                    <RotateTransform3D.Rotation>
-                                        <AxisAngleRotation3D Axis="0,1,0" Angle="-90" />
-                                    </RotateTransform3D.Rotation>
-                                </RotateTransform3D>
-                                <RotateTransform3D>
-                                    <RotateTransform3D.Rotation>
-                                        <AxisAngleRotation3D Axis="1,0,0" Angle="90" />
-                                    </RotateTransform3D.Rotation>
-                                </RotateTransform3D>
-                            </Transform3DGroup.Children>
-                        </Transform3DGroup>
-                    </ModelVisual3D.Transform>
-                </ModelVisual3D>
+                <ModelVisual3D Content="{Binding IRBeacon}" />
                 <HelixToolkit:GridLinesVisual3D />
             </HelixToolkit:HelixViewport3D>
         </StackPanel>
