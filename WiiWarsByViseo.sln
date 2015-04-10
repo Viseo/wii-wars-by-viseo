@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Documentations", "_Documen
 		_documentations\wii-wars-by-VISEO-Technical_Documentation.html = _documentations\wii-wars-by-VISEO-Technical_Documentation.html
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viseo.WiiWars.MobileServices", "Viseo.WiiWars.MobileServices\Viseo.WiiWars.MobileServices.csproj", "{271518BC-2287-4BD6-AADE-97FD705AFB74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,24 @@ Global
 		{F6BB8BAF-32FA-4A99-A9AF-F10E36372F3A}.Release|x64.Build.0 = Release|Any CPU
 		{F6BB8BAF-32FA-4A99-A9AF-F10E36372F3A}.Release|x86.ActiveCfg = Release|Any CPU
 		{F6BB8BAF-32FA-4A99-A9AF-F10E36372F3A}.Release|x86.Build.0 = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Debug|x64.Build.0 = Debug|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Debug|x86.Build.0 = Debug|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release JP|Any CPU.ActiveCfg = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release JP|Any CPU.Build.0 = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release JP|x64.ActiveCfg = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release JP|x64.Build.0 = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release JP|x86.ActiveCfg = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release JP|x86.Build.0 = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release|x64.ActiveCfg = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release|x64.Build.0 = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release|x86.ActiveCfg = Release|Any CPU
+		{271518BC-2287-4BD6-AADE-97FD705AFB74}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
