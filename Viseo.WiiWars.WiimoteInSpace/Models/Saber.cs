@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Viseo.WiiWars.WiimoteInSpace.Models
+﻿namespace Viseo.WiiWars.WiimoteInSpace.Models
 {
     public class Saber : NotifierBase
     {

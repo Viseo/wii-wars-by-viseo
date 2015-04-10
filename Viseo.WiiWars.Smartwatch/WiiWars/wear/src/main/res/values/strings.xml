@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Wii Wars</string>
+    <string name="hello_round">Hello Round World!</string>
+    <string name="hello_square">Hello Square World!</string>
+    <string name="showNotification">SHOW NOTIFICATION</string>
+    <string name="mainpage_title">Wii Wars</string>
+    <string name="mainpage_desc">Customize your lightsaber !</string>
+    <string name="colorfragment_title">Choose your color</string>
+    <string name="turnonfragment_title">Turn on your lightsaber !</string>
+    <string name="color_red">Red</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_green">Green</string>
+    <string name="color_purple">Purple</string>
+    <string name="score">Score</string>
+    <string name="vocalSearchTitle">Voice commands</string>
+    <string name="vocalSearchDesc">Say "on", "off" or a color</string>
+    <string name="copyright">Wii Wars by Viseo 2015</string>
+</resources>

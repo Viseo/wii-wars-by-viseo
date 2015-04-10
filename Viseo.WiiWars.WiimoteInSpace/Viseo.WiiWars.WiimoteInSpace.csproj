@@ -183,13 +183,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helper\ObjectHelper.cs" />
-    <Compile Include="WebAPI\Client.cs" />
-    <Compile Include="WebAPI\Controllers\SaberController.cs" />
+    <Compile Include="Helper\DoubleAverager.cs" />
+    <Compile Include="WebApi\Client.cs" />
+    <Compile Include="WebApi\Controllers\SaberController.cs" />
     <Compile Include="Models\Saber.cs" />
-    <Compile Include="WebAPI\DAL\ISaberRepository.cs" />
-    <Compile Include="WebAPI\DAL\SaberRepository.cs" />
-    <Compile Include="WebAPI\Server.cs" />
-    <Compile Include="WebAPI\Startup.cs" />
+    <Compile Include="WebApi\Dal\ISaberRepository.cs" />
+    <Compile Include="WebApi\Dal\SaberRepository.cs" />
+    <Compile Include="WebApi\WebApiServer.cs" />
+    <Compile Include="WebApi\Startup.cs" />
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

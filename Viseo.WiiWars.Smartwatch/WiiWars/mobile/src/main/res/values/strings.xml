@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Wii Wars</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="showNotification">Show notification</string>
+    <string name="title_activity_view_event">ViewEventActivity</string>
+    <string name="saberlightImage">saberlightImage</string>
+    <string name="saberlightoffImage">saberlightoffImage</string>
+</resources>
