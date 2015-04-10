@@ -50,6 +50,10 @@ namespace Viseo.WiiWars.EventHub
             NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
             EventHubDescription eventHubDescription = new EventHubDescription(EVENT_HUB_NAME);
             eventHubDescription.PartitionCount = 8;
+
+            // {"The remote server returned an error: (401) Unauthorized. Manage claim is required for this operation. 
+            // TrackingId:ab2452dd-b79b-4e92-91f0-5171d4a5b5bf_G50,TimeStamp:3/24/2015 9:09:23 AM"}
+
             namespaceManager.CreateEventHubIfNotExistsAsync(eventHubDescription).Wait();
 
             // Create EventHubClient
