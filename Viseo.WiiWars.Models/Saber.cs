@@ -1,96 +1,40 @@
-﻿using System;
-
-namespace Viseo.WiiWars.Models
+﻿// namespace Viseo.WiiWars.WiimoteInSpace.Models
+namespace Viseo.WiiWars.Models.Dal
 {
-    public class Saber
+    public class Saber // : NotifierBase
     {
-        /// <summary>
-        /// Determines the unique ID of the Saber in the world.
-        /// </summary>
-        private int _id;
-
-        /// <summary>
-        /// Read only property to get the GUID of the Saber.
-        /// </summary>
-        public int id
-        {
-            get { return _id; }
-        }
-
-        /// <summary>
-        /// Determines the score for the unique ID of the Saber.
-        /// </summary>
-        private int _score;
-
-        /// <summary>
-        /// Read only property to get the Score of the Saber.
-        /// </summary>
-        public int score
-        {
-            get { return _score; }
-        }
-
-        public enum enumSaberColor
+        public enum SaberColor
         {
             Blue,
             Green,
             Red,
             Violet
-        };
-
-        private enumSaberColor _enumSaberColor;
-
-        public enumSaberColor SaberColor
-        {
-            get { return _enumSaberColor; }
-            set { _enumSaberColor = value; }
         }
 
-        /// <summary>
-        /// Allows to turn On or Off the Saber.
-        /// </summary>
-        private bool _isSaberOn;
+        public int Id { get; set; }
 
-        /// <summary>
-        /// Read only property to check is the Saber is on or not.
-        /// </summary>
-        public bool isSaberOn
+        private SaberColor _color;
+
+        public SaberColor Color
         {
-            get { return _isSaberOn; }
+            get { return _color; }
+            set
+            {
+                _color = value;
+                //OnPropertyChanged();
+            }
         }
 
-        public Saber(int id, enumSaberColor mySaberColor)
+        private bool _isOn;
+
+        public bool IsOn
         {
-            _id = id;
-            _enumSaberColor = mySaberColor;
-
-            // By default, it is turned off.
-            _isSaberOn = false;
-
-            // Creates a number score.
-            // System.Random myRandom = new System.Random();
-            // int randomScore = myRandom.Next(1, 123456); 
-            _score = 32157;
+            get { return _isOn; }
+            set
+            {
+                _isOn = value;
+                //OnPropertyChanged();
+            }
         }
-
-        public void TurnOn()
-        {
-            switchOnOffStatus();
-        }
-
-        public void TurnOff()
-        {
-            switchOnOffStatus();
-        }
-
-        private void switchOnOffStatus()
-        {
-            _isSaberOn = !_isSaberOn;
-        }
-
-        //internal enumSaberColor getColor()
-        //{
-        //    return _enumSaberColor;
-        //}
     }
 }

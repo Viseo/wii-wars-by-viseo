@@ -17,11 +17,11 @@ using AForge.Video.DirectShow;
 using System.Threading;
 using AForge.Video;
 using System.Drawing;
-using Viseo.WiiWars.WiimoteInSpace.WebApi.Dal;
+using Viseo.WiiWars.Models.Dal;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
-    public sealed class MainWindowViewModel : NotifierBase, IDisposable
+    public sealed class MainWindowViewModel : /* NotifierBase, */ IDisposable
     {
         #region Properties
         private FilterInfoCollection _videoDevices;
@@ -40,7 +40,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _videoButtonImage = value;
-                OnPropertyChanged();
+                // // OnPropertyChanged();
             }
         }
 
@@ -50,7 +50,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             private set
             {
                 _devices = (List<FilterInfo>)value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -60,7 +60,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _selectedDevice = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -70,7 +70,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _currentImage = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -165,7 +165,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _arImage = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -203,7 +203,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _model = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -213,7 +213,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _modelAR = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -225,7 +225,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _iRBeacon = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -237,7 +237,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _translate = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -249,7 +249,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _rot = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
         
@@ -261,7 +261,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _rotCenter = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -273,7 +273,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ocvTranslate = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -285,7 +285,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ocvRot = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -297,7 +297,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _rotQuat = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -328,7 +328,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ir1 = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -340,7 +340,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ir2 = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -352,7 +352,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ir3 = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -364,7 +364,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ir4 = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -387,7 +387,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _selectedModel = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
 
                 switch (SelectedModel)
                 {
@@ -409,7 +409,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         #endregion
 
         private WebApi.WebApiServer _server;
-        private SaberRepository _saberRepository;
+        private Models.Dal.SaberRepository _saberRepository;
 
         public MainWindowViewModel()
         {
@@ -457,36 +457,36 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
                 wm.WiimoteChanged += Wm_WiimoteChanged;
 
-                var saber = new Models.Saber() { Color = WiimoteInSpace.Models.Saber.SaberColor.Blue, IsOn = false };
-                saber.PropertyChanged += Saber_PropertyChanged;
+                var saber = new Saber() { Color = Saber.SaberColor.Blue, IsOn = false };
+                // saber.PropertyChanged += Saber_PropertyChanged;
                 _saberRepository.Add(saber);
 
             }
         }
 
-        Dictionary<Models.Saber.SaberColor, Material> SaberMaterials = new Dictionary<WiimoteInSpace.Models.Saber.SaberColor, Material>()
+        Dictionary<Saber.SaberColor, Material> SaberMaterials = new Dictionary<Saber.SaberColor, Material>()
         {
-            { WiimoteInSpace.Models.Saber.SaberColor.Blue, MaterialHelper.CreateMaterial(Colors.Blue) },
-            { WiimoteInSpace.Models.Saber.SaberColor.Green, MaterialHelper.CreateMaterial(Colors.Green) },
-            { WiimoteInSpace.Models.Saber.SaberColor.Red, MaterialHelper.CreateMaterial(Colors.Red) },
+            { Saber.SaberColor.Blue, MaterialHelper.CreateMaterial(Colors.Blue) },
+            { Saber.SaberColor.Green, MaterialHelper.CreateMaterial(Colors.Green) },
+            { Saber.SaberColor.Red, MaterialHelper.CreateMaterial(Colors.Red) },
         };
 
         private void Saber_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsOn")
             {
-                SetModelAR((Models.Saber)sender);
+                SetModelAR((Saber)sender);
             }
             if (e.PropertyName == "Color")
             {
                 _synchronizationContext.Post(o =>
                 {
-                    ((GeometryModel3D)((Model3DGroup)_lightSaber).Children[0]).Material = SaberMaterials[((Models.Saber)sender).Color];
+                    ((GeometryModel3D)((Model3DGroup)_lightSaber).Children[0]).Material = SaberMaterials[((Saber)sender).Color];
                 }, null);
             }
         }
 
-        private void SetModelAR(Models.Saber saber)
+        private void SetModelAR(Saber saber)
         {
             if (saber == null)
                 return;
@@ -530,7 +530,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _transformMatrix = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -593,12 +593,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                     _ocvTranslate = _translateAvg.Update(tvecIdxer[0],
                                                          tvecIdxer[1],
                                                          tvecIdxer[2]);
-                    OnPropertyChanged("OcvTranslate");
+                    // OnPropertyChanged("OcvTranslate");
 
                     _ocvRot = _rotAvg.Update(rvecIdxer[0] * (180 / Math.PI),
                                              rvecIdxer[1] * (180 / Math.PI),
                                              rvecIdxer[2] * (180 / Math.PI));
-                    OnPropertyChanged("OcvRot");
+                    // OnPropertyChanged("OcvRot");
 
                     //Transformation Matrix computation
                     Mat R = new Mat(3, 3, MatType.CV_64F);

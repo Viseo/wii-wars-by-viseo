@@ -183,16 +183,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helper\Matrix3DAverager.cs" />
-    <Compile Include="Helper\ObjectHelper.cs" />
     <Compile Include="Helper\DoubleAverager.cs" />
     <Compile Include="Helper\Point3DAverager.cs" />
-    <Compile Include="Models\Game.cs" />
     <Compile Include="WebApi\Client.cs" />
-    <Compile Include="WebApi\Controllers\GameController.cs" />
-    <Compile Include="WebApi\Controllers\SaberController.cs" />
-    <Compile Include="Models\Saber.cs" />
-    <Compile Include="WebApi\Dal\ISaberRepository.cs" />
-    <Compile Include="WebApi\Dal\SaberRepository.cs" />
     <Compile Include="WebApi\WebApiServer.cs" />
     <Compile Include="WebApi\Startup.cs" />
     <Page Include="View\MainWindow.xaml">
@@ -210,7 +203,6 @@
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\NotificationEventArgs.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\NotifierBase.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -400,6 +392,17 @@
     <Content Include="dll\x86\opencv_videostab2410.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="WebApi\Controllers\" />
+    <Folder Include="WebApi\Dal\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Viseo.WiiWars.Models\Viseo.WiiWars.Models.csproj">
+      <Project>{12750fe3-0dac-4db0-a334-ecc2116fb7e2}</Project>
+      <Name>Viseo.WiiWars.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
