@@ -6,7 +6,7 @@ using WiimoteLib;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
-	public class IRPlotViewModel // : NotifierBase
+	public class IRPlotViewModel : NotifierBase
 	{
 		private double _x;
 
@@ -16,7 +16,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 			set
 			{
 				_x = value;
-				//OnPropertyChanged();
+				OnPropertyChanged();
 			}
 		}
 
@@ -28,7 +28,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 			set
 			{
 				_y = value;
-				//OnPropertyChanged();
+				OnPropertyChanged();
 			}
 		}
 
@@ -40,7 +40,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 			set
 			{
 				_size = value;
-				//OnPropertyChanged();
+			    OnPropertyChanged();
 			}
 		}
 

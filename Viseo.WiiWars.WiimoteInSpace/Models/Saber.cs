@@ -1,5 +1,4 @@
-﻿
-namespace Viseo.WiiWars.Models.Dal
+﻿namespace Viseo.WiiWars.WiimoteInSpace.Models
 {
     public class Saber : NotifierBase
     {

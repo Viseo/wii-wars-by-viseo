@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Viseo.WiiWars.Models.Dal
-    // namespace Viseo.WiiWars.WiimoteInSpace
 {
 	public abstract class NotifierBase : INotifyPropertyChanged
 	{
