@@ -61,7 +61,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://inv010581:9000/.
+        ///   Looks up a localized string similar to http://localhost:9000/.
         /// </summary>
         internal static string BaseAddress {
             get {

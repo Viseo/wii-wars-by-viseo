@@ -14,9 +14,9 @@ namespace Viseo.WiiWars.WiimoteInSpace.Helper
             _queue = new Queue<double>(depth);
         }
 
-        public double Update(double item)
+        public double Update(double value)
         {
-            _queue.Enqueue(item);
+            _queue.Enqueue(value);
             if (_queue.Count > _depth)
                 _queue.Dequeue();
 

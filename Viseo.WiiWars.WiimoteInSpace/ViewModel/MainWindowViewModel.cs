@@ -17,11 +17,11 @@ using AForge.Video.DirectShow;
 using System.Threading;
 using AForge.Video;
 using System.Drawing;
-using Viseo.WiiWars.WiimoteInSpace.WebApi.Dal;
+using Viseo.WiiWars.Models.Dal;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
-    public sealed class MainWindowViewModel : NotifierBase, IMainWindowViewModel, IDisposable
+    public sealed class MainWindowViewModel : /* NotifierBase, */ IDisposable
     {
         #region Properties
         private FilterInfoCollection _videoDevices;
@@ -40,7 +40,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _videoButtonImage = value;
-                OnPropertyChanged();
+                // // OnPropertyChanged();
             }
         }
 
@@ -50,7 +50,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             private set
             {
                 _devices = (List<FilterInfo>)value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -60,7 +60,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _selectedDevice = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -70,7 +70,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _currentImage = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -165,7 +165,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _arImage = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -203,7 +203,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _model = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -213,7 +213,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _modelAR = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -225,82 +225,34 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _iRBeacon = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
-        private double _translateX;
+        private Point3D _translate;
 
-        public double TranslateX
+        public Point3D Translate
         {
-            get { return _translateX; }
+            get { return _translate; }
             set
             {
-                _translateX = value;
-                OnPropertyChanged();
+                _translate = value;
+                // OnPropertyChanged();
             }
         }
 
-        private double _translateY;
+        private Point3D _rot;
 
-        public double TranslateY
+        public Point3D Rot
         {
-            get { return _translateY; }
+            get { return _rot; }
             set
             {
-                _translateY = value;
-                OnPropertyChanged();
+                _rot = value;
+                // OnPropertyChanged();
             }
         }
-
-        private double _translateZ;
-
-        public double TranslateZ
-        {
-            get { return _translateZ; }
-            set
-            {
-                _translateZ = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private double _rotX;
-
-        public double RotX
-        {
-            get { return _rotX; }
-            set
-            {
-                _rotX = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private double _rotY;
-
-        public double RotY
-        {
-            get { return _rotY; }
-            set
-            {
-                _rotY = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private double _rotZ;
-
-        public double RotZ
-        {
-            get { return _rotZ; }
-            set
-            {
-                _rotZ = value;
-                OnPropertyChanged();
-            }
-        }
-
+        
         private Point3D _rotCenter;
 
         public Point3D RotCenter
@@ -309,19 +261,57 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _rotCenter = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
+
+        private Point3D _ocvTranslate = new Point3D();
+
+        public Point3D OcvTranslate
+        {
+            get { return _ocvTranslate; }
+            set
+            {
+                _ocvTranslate = value;
+                // OnPropertyChanged();
+            }
+        }
+
+        private Point3D _ocvRot = new Point3D();
+
+        public Point3D OcvRot
+        {
+            get { return _ocvRot; }
+            set
+            {
+                _ocvRot = value;
+                // OnPropertyChanged();
+            }
+        }
+
+        private Quaternion _rotQuat;
+
+        public Quaternion RotQuat
+        {
+            get { return _rotQuat; }
+            set
+            {
+                _rotQuat = value;
+                // OnPropertyChanged();
+            }
+        }
+
+
 
 
         public WiimoteCollection WiimoteCollection { get; private set; }
 
         private List<IRPlotViewModel> _irPlots = new List<IRPlotViewModel>()
         {
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue), Point = new Point3D(-3.3, 0.5, -1.6) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow), Point = new Point3D(-3.3, 0.5, 0.5) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red), Point = new Point3D(2.8, 0.5, 1.6) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Green), Point = new Point3D(2.8, 0.5, -1.6) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue), Point = new Point3D(-1.6, 3.3, -0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow), Point = new Point3D(0.6, 3.3, -0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red), Point = new Point3D(1.6, -2.8, -0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Green), Point = new Point3D(-1.6, -2.8, -0.5) },
         };
 
 
@@ -338,7 +328,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ir1 = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -350,7 +340,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ir2 = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -362,7 +352,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ir3 = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -374,7 +364,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _ir4 = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
 
@@ -397,7 +387,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             set
             {
                 _selectedModel = value;
-                OnPropertyChanged();
+                // OnPropertyChanged();
 
                 switch (SelectedModel)
                 {
@@ -419,7 +409,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         #endregion
 
         private WebApi.WebApiServer _server;
-        private SaberRepository _saberRepository;
+        private Models.Dal.SaberRepository _saberRepository;
 
         public MainWindowViewModel()
         {
@@ -467,37 +457,39 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
                 wm.WiimoteChanged += Wm_WiimoteChanged;
 
-                var saber = new Models.Saber() { Color = WiimoteInSpace.Models.Saber.SaberColor.Blue, IsOn = false };
-                saber.PropertyChanged += Saber_PropertyChanged;
+                var saber = new Saber() { Color = Saber.SaberColor.Blue, IsOn = false };
+                // saber.PropertyChanged += Saber_PropertyChanged;
                 _saberRepository.Add(saber);
 
             }
         }
 
-        Dictionary<Models.Saber.SaberColor, Material> SaberMaterials = new Dictionary<WiimoteInSpace.Models.Saber.SaberColor, Material>()
+        Dictionary<Saber.SaberColor, Material> SaberMaterials = new Dictionary<Saber.SaberColor, Material>()
         {
-            { WiimoteInSpace.Models.Saber.SaberColor.Blue, MaterialHelper.CreateMaterial(Colors.Blue) },
-            { WiimoteInSpace.Models.Saber.SaberColor.Green, MaterialHelper.CreateMaterial(Colors.Green) },
-            { WiimoteInSpace.Models.Saber.SaberColor.Red, MaterialHelper.CreateMaterial(Colors.Red) },
+            { Saber.SaberColor.Blue, MaterialHelper.CreateMaterial(Colors.Blue) },
+            { Saber.SaberColor.Green, MaterialHelper.CreateMaterial(Colors.Green) },
+            { Saber.SaberColor.Red, MaterialHelper.CreateMaterial(Colors.Red) },
         };
 
         private void Saber_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsOn")
             {
-                SetModelAR((Models.Saber)sender);
+                SetModelAR((Saber)sender);
             }
             if (e.PropertyName == "Color")
             {
                 _synchronizationContext.Post(o =>
                 {
-                    ((GeometryModel3D)((Model3DGroup)_lightSaber).Children[0]).Material = SaberMaterials[((Models.Saber)sender).Color];
+                    ((GeometryModel3D)((Model3DGroup)_lightSaber).Children[0]).Material = SaberMaterials[((Saber)sender).Color];
                 }, null);
             }
         }
 
-        private void SetModelAR(Models.Saber saber)
+        private void SetModelAR(Saber saber)
         {
+            if (saber == null)
+                return;
             if (!_videoEnabled)
                 ModelAR = null;
             else
@@ -522,14 +514,26 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private bool _lastHome = false;
 
         private const int avgDepth = 10;
-        private DoubleAverager _translateXAvg = new DoubleAverager(avgDepth);
-        private DoubleAverager _translateYAvg = new DoubleAverager(avgDepth);
-        private DoubleAverager _translateZAvg = new DoubleAverager(avgDepth);
-        private DoubleAverager _rotXAvg = new DoubleAverager(avgDepth);
-        private DoubleAverager _rotYAvg = new DoubleAverager(avgDepth);
-        private DoubleAverager _rotZAvg = new DoubleAverager(avgDepth);
+        private Point3DAverager _translateAvg = new Point3DAverager(avgDepth);
+        private Point3DAverager _rotAvg = new Point3DAverager(avgDepth);
+
+        private Point3D _translateCalib;
+        private Point3D _rotCalib;
 
         #endregion
+        private Matrix3DAverager _matrixAvg = new Matrix3DAverager(avgDepth);
+        private Matrix3D _transformMatrix;
+
+        public Matrix3D TransformMatrix
+        {
+            get { return _transformMatrix; }
+            set
+            {
+                _transformMatrix = value;
+                // OnPropertyChanged();
+            }
+        }
+
 
         private void Wm_WiimoteChanged(object sender, WiimoteChangedEventArgs e)
         {
@@ -539,6 +543,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             IR2 = "IR2: " + sensors[1].RawPosition.ToString();
             IR3 = "IR3: " + sensors[2].RawPosition.ToString();
             IR4 = "IR4: " + sensors[3].RawPosition.ToString();
+
 
             //Order image points counter clockwise to match object points
             var imagePoints = Cv2.ConvexHull(sensors.Select(s => s.RawPosition).ToPoint2f().ToArray()).ToList();
@@ -585,14 +590,33 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
                     var rvecIdxer = rvec.GetIndexer();
                     var tvecIdxer = tvec.GetIndexer();
+                    _ocvTranslate = _translateAvg.Update(tvecIdxer[0],
+                                                         tvecIdxer[1],
+                                                         tvecIdxer[2]);
+                    // OnPropertyChanged("OcvTranslate");
 
-                    TranslateX = _translateXAvg.Update(tvecIdxer[0]);
-                    TranslateY = _translateYAvg.Update(tvecIdxer[1]);
-                    TranslateZ = _translateZAvg.Update(tvecIdxer[2]);
+                    _ocvRot = _rotAvg.Update(rvecIdxer[0] * (180 / Math.PI),
+                                             rvecIdxer[1] * (180 / Math.PI),
+                                             rvecIdxer[2] * (180 / Math.PI));
+                    // OnPropertyChanged("OcvRot");
 
-                    RotX = _rotXAvg.Update(rvecIdxer[0] * (180 / Math.PI));
-                    RotY = _rotYAvg.Update(rvecIdxer[1] * (180 / Math.PI));
-                    RotZ = _rotZAvg.Update(rvecIdxer[2] * (180 / Math.PI));
+                    //Transformation Matrix computation
+                    Mat R = new Mat(3, 3, MatType.CV_64F);
+                    Cv2.Rodrigues(rvec, R);
+
+                    Mat extrinsic = Mat.Eye(4, 4, MatType.CV_64F);
+                    R.CopyTo(extrinsic.RowRange(0, 3).ColRange(0, 3));
+                    tvec.CopyTo(extrinsic.RowRange(0, 3).Col[3]);
+
+                    // Find the inverse of the extrinsic matrix (should be the same as just calling extrinsic.inv())
+                    Mat extrinsic_inv_R = R.T(); // inverse of a rotational matrix is its transpose
+                    Mat extrinsic_inv_tvec = -extrinsic_inv_R * (Mat)tvec;
+                    Mat extrinsic_inv = Mat.Eye(4, 4, MatType.CV_64F);
+                    extrinsic_inv_R.CopyTo(extrinsic_inv.RowRange(0, 3).ColRange(0, 3));
+                    extrinsic_inv_tvec.CopyTo(extrinsic_inv.RowRange(0, 3).Col[3]);
+
+                    TransformMatrix = _matrixAvg.Update(extrinsic_inv.ToMatrix3D());
+
                 }
             }
 
@@ -653,11 +677,11 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         {
             var modelGroup = new Model3DGroup();
             var meshBuilder = new MeshBuilder();
-            meshBuilder.AddBox(new Point3D(0, 0, 0), 8, 0.5, 6);
+            meshBuilder.AddBox(new Point3D(0, 0, 0), 6, 8, 0.5);
 
             var mesh = meshBuilder.ToMesh(true);
 
-            var cardMaterial = MaterialHelper.CreateMaterial(Colors.WhiteSmoke);
+            var cardMaterial = MaterialHelper.CreateMaterial(Colors.Red);
             modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = cardMaterial, BackMaterial = cardMaterial });
 
             meshBuilder = new MeshBuilder();
@@ -666,6 +690,11 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             mesh = meshBuilder.ToMesh(true);
             var ledMaterial = MaterialHelper.CreateMaterial(Colors.SteelBlue);
             modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = ledMaterial, BackMaterial = ledMaterial });
+
+            var transform = new Transform3DGroup();
+            transform.Children.Add(new TranslateTransform3D(0, 0, 20));
+            modelGroup.Transform = transform;
+
 
             IRBeacon = modelGroup;
         }
@@ -679,10 +708,6 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             ((GeometryModel3D)((Model3DGroup)_lightSaberOff).Children[0]).Material = sabreMat;
 
             var transform = new Transform3DGroup();
-            //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
-            //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 90)));
-            //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
-
             transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 90)));
 
             _lightSaber.Transform = transform;
@@ -702,17 +727,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         {
             var modelGroup = new Model3DGroup();
             var meshBuilder = new MeshBuilder();
-            meshBuilder.AddBox(new Point3D(0, 0, 0), 3.5, 14.5, 3);
+            meshBuilder.AddBox(new Point3D(0, 0, 0), 3, 3.5, 14.5);
 
             var mesh = meshBuilder.ToMesh(true);
 
-            var transform = new Transform3DGroup();
-            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
-            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 90)));
-            transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -90)));
-
             var whiteMaterial = MaterialHelper.CreateMaterial(Colors.White);
-            modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = whiteMaterial, BackMaterial = whiteMaterial, Transform = transform });
+            modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = whiteMaterial, BackMaterial = whiteMaterial });
             
             _wiimote = modelGroup;
         }
