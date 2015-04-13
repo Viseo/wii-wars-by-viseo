@@ -187,6 +187,8 @@
     <Compile Include="Helper\DoubleAverager.cs" />
     <Compile Include="Helper\Point3DAverager.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="ViewModel\CameraViewModel.cs" />
+    <Compile Include="ViewModel\WiimoteButtonsEvents.cs" />
     <Compile Include="WebApi\Client.cs" />
     <Compile Include="WebApi\Controllers\GameController.cs" />
     <Compile Include="WebApi\Controllers\SaberController.cs" />

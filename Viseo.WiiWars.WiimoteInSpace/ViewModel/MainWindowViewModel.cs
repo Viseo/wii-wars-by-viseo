@@ -74,6 +74,19 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
+        private CameraViewModel _camera;
+
+        public CameraViewModel Camera
+        {
+            get { return _camera; }
+            set
+            {
+                _camera = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public ICommand StartStopVideoFeedCommand
         {
             get { return _startStopVideoFeedCommand ?? (_startStopVideoFeedCommand = new RelayCommand(StartStopVideoFeed)); }
@@ -308,10 +321,10 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
         private List<IRPlotViewModel> _irPlots = new List<IRPlotViewModel>()
         {
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue), Point = new Point3D(-1.6, 3.3, -0.5) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow), Point = new Point3D(0.6, 3.3, -0.5) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red), Point = new Point3D(1.6, -2.8, -0.5) },
-            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Green), Point = new Point3D(-1.6, -2.8, -0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Blue), Point =   new Point3D(-3.2, -4.6, -0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Yellow), Point = new Point3D(-3.2, -1.3, -0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Red), Point =    new Point3D(2.6, 4.6, -0.5) },
+            new IRPlotViewModel() { X = 0, Y = 0, Size = 0, Color = new SolidColorBrush(Colors.Green), Point =  new Point3D(2.6, -4.6, -0.5) },
         };
 
 
@@ -410,6 +423,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
         private WebApi.WebApiServer _server;
         private SaberRepository _saberRepository;
+        private WiimoteButtonsEvents _wiimoteButtonsEvent = new WiimoteButtonsEvents();
 
         public MainWindowViewModel()
         {
@@ -421,6 +435,8 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             dispatcher = Dispatcher.CurrentDispatcher;
             _synchronizationContext = SynchronizationContext.Current;
             VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
+
+            Camera = new CameraViewModel();
 
             InitializeWiimote();
             InitializeWiimoteModel();
@@ -456,12 +472,36 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                 wm.SetLEDs(index++);
 
                 wm.WiimoteChanged += Wm_WiimoteChanged;
+                wm.WiimoteChanged += _wiimoteButtonsEvent.WiimoteChanged;
+
+                _wiimoteButtonsEvent.ButtonPressed += _wiimoteButtonsEvent_ButtonPressed;
 
                 var saber = new Models.Saber() { Color = WiimoteInSpace.Models.Saber.SaberColor.Blue, IsOn = false };
                 saber.PropertyChanged += Saber_PropertyChanged;
                 _saberRepository.Add(saber);
 
             }
+        }
+
+        private void _wiimoteButtonsEvent_ButtonPressed(object sender, WiimoteButtonsEvents.ButtonPressedEventArgs e)
+        {
+            if (e.Button == WiimoteButtonsEvents.Button.A)
+                _saberRepository.Get(1).IsOn = !_saberRepository.Get(1).IsOn;
+
+            if (e.Button == WiimoteButtonsEvents.Button.Up)
+                Camera.Move(CameraViewModel.Movement.Front);
+            if (e.Button == WiimoteButtonsEvents.Button.Down)
+                Camera.Move(CameraViewModel.Movement.Back);
+            if (e.Button == WiimoteButtonsEvents.Button.Left)
+                Camera.Move(CameraViewModel.Movement.Left);
+            if (e.Button == WiimoteButtonsEvents.Button.Right)
+                Camera.Move(CameraViewModel.Movement.Right);
+            if (e.Button == WiimoteButtonsEvents.Button.Minus)
+                Camera.Move(CameraViewModel.Movement.Down);
+            if (e.Button == WiimoteButtonsEvents.Button.Plus)
+                Camera.Move(CameraViewModel.Movement.Up);
+            //if (e.Button == WiimoteButtonsEvents.Button.Home)
+            //    Camera.LookAt(new Point3D(0, 0, 0));
         }
 
         Dictionary<Models.Saber.SaberColor, Material> SaberMaterials = new Dictionary<WiimoteInSpace.Models.Saber.SaberColor, Material>()
@@ -510,16 +550,10 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
         private const double _cy = _imageHeight / 2;
 
         private Mat _intrinsic = new Mat(3, 3, MatType.CV_64F, new double[] { _fx, 0, _cx, 0, _fy, _cy, 0, 0, 1 });
-        private bool _lastA = false;
-        private bool _lastHome = false;
 
         private const int avgDepth = 10;
         private Point3DAverager _translateAvg = new Point3DAverager(avgDepth);
         private Point3DAverager _rotAvg = new Point3DAverager(avgDepth);
-
-        private Point3D _translateCalib;
-        private Point3D _rotCalib;
-
         #endregion
         private Matrix3DAverager _matrixAvg = new Matrix3DAverager(avgDepth);
         private Matrix3D _transformMatrix;
@@ -619,30 +653,6 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
                 }
             }
-
-            if (_lastA == false && e.WiimoteState.ButtonState.A == true)
-            {
-                _saberRepository.Get(1).IsOn = !_saberRepository.Get(1).IsOn;
-            }
-            _lastA = e.WiimoteState.ButtonState.A;
-
-
-            if (_lastHome == false && e.WiimoteState.ButtonState.Home == true)
-            {
-                //var transform = new Transform3DGroup();
-
-                //transform.Children.Add(new TranslateTransform3D(TranslateX, TranslateY, TranslateZ));
-                //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), RotX)));
-                //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), RotY)));
-                //transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), RotZ)));
-
-                //dispatcher.Invoke(() =>
-                //{
-                //    _lightSaber.Transform = transform;
-                //    _lightSaberOff.Transform = transform;
-                //});
-            }
-            _lastHome = e.WiimoteState.ButtonState.Home;
         }
 
         private static int GetShortestDistanceIdx(List<Point2f> imagePoints)

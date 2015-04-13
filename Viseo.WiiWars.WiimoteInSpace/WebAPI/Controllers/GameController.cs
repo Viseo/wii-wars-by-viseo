@@ -10,13 +10,13 @@ namespace Viseo.WiiWars.WiimoteInSpace.WebApi.Controllers
 {
     public class GameController : ApiController
     {
-        private IGameRepository _gameRepository;
+        //private IGameRepository _gameRepository;
 
         private List<SaberController> _saberControllers;
 
         public GameController(List<SaberController> controllers)
         {
-            _gameRepository = GameRepository.Instance;
+            //_gameRepository = GameRepository.Instance;
             _saberControllers = controllers;
         }
 
@@ -37,12 +37,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.WebApi.Controllers
         [HttpGet]
         public bool launchGame(int id)
         {
-            var game = _gameRepository.Get(id);
-            if (game != null && game.IsGameStarted == false)
-            {
-                game.IsGameStarted = true;
-                return true;
-            }
+            //var game = _gameRepository.Get(id);
+            //if (game != null && game.IsGameStarted == false)
+            //{
+            //    game.IsGameStarted = true;
+            //    return true;
+            //}
             return false;
         }
 

@@ -14,12 +14,13 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Border BorderBrush="Black" BorderThickness="1" Margin="10">
-            <Image Source="{Binding CurrentImage}" RenderOptions.BitmapScalingMode="Linear" />
+            <Image Name="ARImage" Source="{Binding CurrentImage}" RenderOptions.BitmapScalingMode="Linear" />
         </Border>
-        <HelixToolkit:HelixViewport3D Width="640" Height="480"
+        <HelixToolkit:HelixViewport3D Width="{Binding ElementName=ARImage, Path=ActualWidth}" Height="{Binding ElementName=ARImage, Path=ActualHeight}"
                                       ShowViewCube="False">
             <HelixToolkit:HelixViewport3D.Camera>
-                <PerspectiveCamera x:Name="MainCamera" Position="-200, 0, 0"  LookDirection="200, 0, 0" UpDirection="0,0,-1" />
+                <PerspectiveCamera x:Name="MainCamera" Position="{Binding Camera.Position, Mode=TwoWay}"  LookDirection="{Binding Camera.LookDirection, Mode=TwoWay}" UpDirection="{Binding Camera.UpDirection, Mode=TwoWay}" />
+                <!--<PerspectiveCamera x:Name="MainCamera" Position="-200, 0, 0"  LookDirection="1, 0, 0" UpDirection="0,0,-1" />-->
             </HelixToolkit:HelixViewport3D.Camera>
             <HelixToolkit:SunLight/>
             <ModelVisual3D Content="{Binding ModelAR}">

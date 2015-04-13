@@ -22,6 +22,7 @@ namespace Viseo.WiiWars.WiimoteInSpace
             //    return;
 
             //vm.GetViewportImage += GetViewPortImage;
+            //MainCamera.LookAt()
         }
 
         //private void GetViewPortImage(object sender, NotificationEventArgs<int, BitmapSource> e)
