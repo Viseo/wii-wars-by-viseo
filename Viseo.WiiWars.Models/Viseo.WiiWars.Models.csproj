@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ISaberRepository.cs" />
     <Compile Include="NotifierBase.cs" />
+    <Compile Include="ObjectHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Saber.cs" />
     <Compile Include="SaberRepository.cs" />

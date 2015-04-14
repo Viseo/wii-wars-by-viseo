@@ -12,10 +12,10 @@ namespace Viseo.WiiWars.WiimoteInSpace.WebApi
             _instance.Dispose();
         }
 
-        public void Start()
+        public void Start(string baseAddress)
         {
             // If this temporary code crashed due to 'Access Denied', you need to Run VS as Administrator.
-            _instance = WebApp.Start<Startup>(url: Properties.Resources.BaseAddress);
+            _instance = WebApp.Start<Startup>(url: baseAddress);
         }
     }
 }

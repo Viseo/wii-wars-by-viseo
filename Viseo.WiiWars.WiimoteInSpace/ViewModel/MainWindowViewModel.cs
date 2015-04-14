@@ -18,6 +18,7 @@ using System.Threading;
 using AForge.Video;
 using System.Drawing;
 using Viseo.WiiWars.WiimoteInSpace.WebApi.Dal;
+using System.Net;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
@@ -421,15 +422,50 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
         #endregion
 
+        private bool _localWebAPI;
+
+        public bool LocalWebAPI
+        {
+            get { return _localWebAPI; }
+            set
+            {
+                _localWebAPI = value;
+                OnPropertyChanged();
+
+                if (value)
+                {
+                    if (_server == null)
+                        _server = new WebApi.WebApiServer();
+                    _server.Start(LocalWebAPIBaseAddress);
+                }
+                else
+                {
+                    _server.Dispose();
+                    _server = null;
+                }
+            }
+        }
+
+        private string _localWebAPIBaseAddress;
+
+        public string LocalWebAPIBaseAddress
+        {
+            get { return _localWebAPIBaseAddress; }
+            set
+            {
+                _localWebAPIBaseAddress = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         private WebApi.WebApiServer _server;
         private SaberRepository _saberRepository;
         private WiimoteButtonsEvents _wiimoteButtonsEvent = new WiimoteButtonsEvents();
 
         public MainWindowViewModel()
         {
-            _server = new WebApi.WebApiServer();
-            _server.Start();
-
+            LocalWebAPIBaseAddress = "http://" + GetLocalNetworkIP() + ":9000/";
             _saberRepository = SaberRepository.Instance;
 
             dispatcher = Dispatcher.CurrentDispatcher;
@@ -445,6 +481,13 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             InitializeWebCamList();
 
             SelectedModel = E3DModel.Wiimote;
+        }
+
+        private string GetLocalNetworkIP()
+        {
+            IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
+            var localIP = localIPs.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+            return localIP != null ? localIP.ToString() : null;
         }
 
         private void InitializeWiimote()
@@ -753,7 +796,8 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             foreach (Wiimote wm in WiimoteCollection)
                 wm.Disconnect();
             CloseVideoSource();
-            _server.Dispose();
+            if (_server != null)
+                _server.Dispose();
             GC.SuppressFinalize(this);
         }
     }

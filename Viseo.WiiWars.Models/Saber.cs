@@ -1,7 +1,7 @@
 ﻿
 namespace Viseo.WiiWars.Models.Dal
 {
-    public class Saber : NotifierBase
+    public class Saber //: NotifierBase
     {
         public enum SaberColor
         {
@@ -21,7 +21,7 @@ namespace Viseo.WiiWars.Models.Dal
             set
             {
                 _color = value;
-                OnPropertyChanged();
+                //OnPropertyChanged();
             }
         }
 
@@ -33,7 +33,7 @@ namespace Viseo.WiiWars.Models.Dal
             set
             {
                 _isOn = value;
-                OnPropertyChanged();
+                //OnPropertyChanged();
             }
         }
     }
