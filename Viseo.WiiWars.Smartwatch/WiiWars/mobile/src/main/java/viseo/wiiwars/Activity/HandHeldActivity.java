@@ -1,5 +1,10 @@
 package viseo.wiiwars.Activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -7,13 +12,16 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.FloatMath;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,11 +29,16 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.IOException;
+
 import viseo.wiiwars.R;
 import viseo.wiiwars.Service.WebServiceScore;
 
 
-public class HandHeldActivity extends ActionBarActivity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, SensorEventListener {
+public class HandHeldActivity extends ActionBarActivity implements ApiAddressDialogFragment.NoticeDialogListener, MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, SensorEventListener {
 
     private GoogleApiClient client;
     private MediaPlayer mPlayer = null;
@@ -36,6 +49,14 @@ public class HandHeldActivity extends ActionBarActivity implements MessageApi.Me
     private String shape="simple";
     private boolean power=false;
 
+    private String apiBaseAddress = "";
+
+    private String turnOnUrl=apiBaseAddress+"/api/saber/TurnOn/1";
+    private String turnOffUrl=apiBaseAddress+"/api/saber/TurnOff/1";
+    private String colorRedUrl=apiBaseAddress+"/api/saber/ChangeColorRed/1";
+    private String colorBlueUrl=apiBaseAddress+"/api/saber/ChangeColorBlue/1";
+    private String colorGreenUrl=apiBaseAddress+"/api/saber/ChangeColorGreen/1";
+
     private float[] mGravity;
     private float mAccel;
     private float mAccelCurrent;
@@ -45,6 +66,9 @@ public class HandHeldActivity extends ActionBarActivity implements MessageApi.Me
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hand_held);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        this.apiBaseAddress = sharedPref.getString("address","http://");
 
         client = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -124,8 +148,51 @@ public class HandHeldActivity extends ActionBarActivity implements MessageApi.Me
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_changeAddress) {
+            ApiAddressDialogFragment dialog = new ApiAddressDialogFragment();
+            dialog.show(this.getFragmentManager(), "Change address");
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        Dialog dialogView = dialog.getDialog();
+        TextView t = (TextView) dialogView.findViewById(R.id.tIpAddress);
+        this.apiBaseAddress = String.valueOf(t.getText());
+        this.turnOnUrl=apiBaseAddress+"/api/saber/TurnOn/1";
+        this.turnOffUrl=apiBaseAddress+"/api/saber/TurnOff/1";
+        this.colorRedUrl=apiBaseAddress+"/api/saber/ChangeColorRed/1";
+        this.colorBlueUrl=apiBaseAddress+"/api/saber/ChangeColorBlue/1";
+        this.colorGreenUrl=apiBaseAddress+"/api/saber/ChangeColorGreen/1";
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor1 = sharedPref.edit();
+        editor1.putString("address",this.apiBaseAddress);
+        editor1.apply();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
+    }
+
+    private void callUrl(final String url)
+    {
+        System.out.println(url);
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    HttpGet httpGet = new HttpGet(url);
+                    DefaultHttpClient httpClient = new DefaultHttpClient();
+                    httpClient.execute(httpGet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
     }
 
     @Override
@@ -144,14 +211,17 @@ public class HandHeldActivity extends ActionBarActivity implements MessageApi.Me
         {
             case "red":
                 this.color="red";
+                callUrl(colorRedUrl);
                 break;
 
             case "blue":
                 this.color="blue";
+                callUrl(colorBlueUrl);
                 break;
 
             case "green":
                 this.color="green";
+                callUrl(colorGreenUrl);
                 break;
 
             case "simple":
@@ -168,12 +238,14 @@ public class HandHeldActivity extends ActionBarActivity implements MessageApi.Me
 
             case "on":
                 this.power=true;
-                playSound(R.raw.lightsaberin);
+                callUrl(turnOnUrl);
+                //playSound(R.raw.lightsaberin);
                 break;
 
             case "off":
                 this.power=false;
-                playSound(R.raw.lightsaberout);
+                callUrl(turnOffUrl);
+                //playSound(R.raw.lightsaberout);
                 break;
         }
         updateLightSaber();
@@ -262,8 +334,9 @@ public class HandHeldActivity extends ActionBarActivity implements MessageApi.Me
                 // Make this higher or lower according to how much
                 // motion you want to detect
                 if(mAccel > 3){
-                    if(power)
-                        playSound(R.raw.lightsabervibration);
+                    if(power) {
+                        //playSound(R.raw.lightsabervibration);
+                    }
                 }
                 break;
         }

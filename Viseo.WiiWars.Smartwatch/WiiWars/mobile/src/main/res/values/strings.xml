@@ -3,8 +3,14 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_changeAddress">Change IP address</string>
     <string name="showNotification">Show notification</string>
     <string name="title_activity_view_event">ViewEventActivity</string>
     <string name="saberlightImage">saberlightImage</string>
     <string name="saberlightoffImage">saberlightoffImage</string>
+    <string name="dialog_address_message">Change IP Address</string>
+    <string name="dialog_address_title">Change IP Address</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

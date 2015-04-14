@@ -38,13 +38,14 @@ public class ListenerService extends WearableListenerService {
     private MobileServiceTable<Saber> saberTable;
 
     private Saber currentSaber;
-
+/*
     @Override
     public void onCreate() {
         super.onCreate();
         // Create the Mobile Service Client instance, using the provided
         // Mobile Service URL and key
         try {
+
             mClient = new MobileServiceClient(
                     "https://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/",
                     "kAFbTILxKueFrdqAvhsuaaAAgdXLub62",
@@ -61,12 +62,12 @@ public class ListenerService extends WearableListenerService {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         showToast(messageEvent.getPath());
-        processMessage(messageEvent.getPath());
+        //processMessage(messageEvent.getPath());
     }
 
     public void showToast(String message)
@@ -105,7 +106,7 @@ public class ListenerService extends WearableListenerService {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    final Saber entity = saberTable.update(currentSaber).get();
+                    saberTable.update(currentSaber).get();
                 } catch (final Exception e){
                     e.printStackTrace();
                 }
@@ -122,7 +123,7 @@ public class ListenerService extends WearableListenerService {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    final Saber entity = saberTable.update(currentSaber).get();
+                    saberTable.update(currentSaber).get();
                 } catch (final Exception e){
                     e.printStackTrace();
                 }
