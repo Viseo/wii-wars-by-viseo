@@ -458,7 +458,32 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
+        private bool _signalRWebAPI;
 
+        public bool SignalRWebAPI
+        {
+            get { return _signalRWebAPI; }
+            set
+            {
+                _signalRWebAPI = value;
+                OnPropertyChanged();
+
+                if (value)
+                {
+                    if (_client == null)
+                        _client = new WebApi.SignalRClient();
+                    _client.ConnectAsync();
+                }
+                else
+                {
+                    _client.Dispose();
+                    _client = null;
+                }
+            }
+        }
+
+
+        private WebApi.SignalRClient _client;
         private WebApi.WebApiServer _server;
         private SaberRepository _saberRepository;
         private WiimoteButtonsEvents _wiimoteButtonsEvent = new WiimoteButtonsEvents();
@@ -798,6 +823,8 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             CloseVideoSource();
             if (_server != null)
                 _server.Dispose();
+            if (_client != null)
+                _client.Dispose();
             GC.SuppressFinalize(this);
         }
     }

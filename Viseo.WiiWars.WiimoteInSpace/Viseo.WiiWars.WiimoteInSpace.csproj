@@ -96,6 +96,10 @@
       <HintPath>..\packages\HelixToolkit.Wpf.2015.1.475\lib\net45\HelixToolkit.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Client, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Owin">
       <HintPath>..\packages\Microsoft.Owin.2.0.2\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
@@ -182,6 +186,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EventHub\EventHubSender.cs" />
     <Compile Include="Helper\Matrix3DAverager.cs" />
     <Compile Include="Helper\ObjectHelper.cs" />
     <Compile Include="Helper\DoubleAverager.cs" />
@@ -189,7 +194,7 @@
     <Compile Include="Models\Game.cs" />
     <Compile Include="ViewModel\CameraViewModel.cs" />
     <Compile Include="ViewModel\WiimoteButtonsEvents.cs" />
-    <Compile Include="WebApi\Client.cs" />
+    <Compile Include="WebApi\SignalRClient.cs" />
     <Compile Include="WebApi\Controllers\GameController.cs" />
     <Compile Include="WebApi\Controllers\SaberController.cs" />
     <Compile Include="Models\Saber.cs" />

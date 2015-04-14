@@ -48,6 +48,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
+            <CheckBox Content="Enable SignalR Web API  " IsChecked="{Binding SignalRWebAPI, Mode=TwoWay}" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
