@@ -16,7 +16,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.WebApi
 
         private SaberController _saberController = new SaberController();
 
-        public async void ConnectAsync()
+        public void Connect()
         {
             var writer = new StreamWriter("ClientLog.txt");
             writer.AutoFlush = true;
@@ -43,7 +43,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.WebApi
 
             try
             {
-                await Connection.Start();
+                Connection.Start();
             }
             catch (HttpRequestException)
             {

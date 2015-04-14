@@ -19,6 +19,8 @@ using AForge.Video;
 using System.Drawing;
 using Viseo.WiiWars.WiimoteInSpace.WebApi.Dal;
 using System.Net;
+using Viseo.WiiWars.EventHub;
+using System.Configuration;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
@@ -470,23 +472,38 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 
                 if (value)
                 {
+                    SignalRStatus = "Connecting...";
                     if (_client == null)
                         _client = new WebApi.SignalRClient();
-                    _client.ConnectAsync();
+                    Task.Factory.StartNew(() => _client.Connect())
+                        .ContinueWith((prevTask) => { SignalRStatus = "Ready"; });
                 }
                 else
                 {
                     _client.Dispose();
                     _client = null;
+                    SignalRStatus = "Disconnected";
                 }
             }
         }
 
+        private string _signalRStatus;
 
+        public string SignalRStatus
+        {
+            get { return _signalRStatus; }
+            set
+            {
+                _signalRStatus = value;
+                OnPropertyChanged();
+            }
+        }
+        
         private WebApi.SignalRClient _client;
         private WebApi.WebApiServer _server;
         private SaberRepository _saberRepository;
         private WiimoteButtonsEvents _wiimoteButtonsEvent = new WiimoteButtonsEvents();
+        private EventHubSender _eventHubSender;
 
         public MainWindowViewModel()
         {
@@ -496,6 +513,8 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             dispatcher = Dispatcher.CurrentDispatcher;
             _synchronizationContext = SynchronizationContext.Current;
             VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
+
+            _eventHubSender = new EventHubSender(ConfigurationManager.AppSettings["EventHub.Name"]);
 
             Camera = new CameraViewModel();
 
@@ -702,6 +721,9 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                                              rvecIdxer[2] * (180 / Math.PI));
                     OnPropertyChanged("OcvRot");
 
+                    _eventHubSender.Send(new { Translate = _ocvTranslate, Rotation = _ocvRot, ButtonState = e.WiimoteState.ButtonState });
+                    //EventHubSender.SendEventsToEventHub(new { Translate = _ocvTranslate, Rotation = _ocvRot, ButtonState = e.WiimoteState.ButtonState });
+                    
                     //Transformation Matrix computation
                     Mat R = new Mat(3, 3, MatType.CV_64F);
                     Cv2.Rodrigues(rvec, R);
@@ -825,6 +847,9 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                 _server.Dispose();
             if (_client != null)
                 _client.Dispose();
+
+            _eventHubSender.Close();
+
             GC.SuppressFinalize(this);
         }
     }

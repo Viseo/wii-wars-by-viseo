@@ -20,7 +20,6 @@
                                       ShowViewCube="False">
             <HelixToolkit:HelixViewport3D.Camera>
                 <PerspectiveCamera x:Name="MainCamera" Position="{Binding Camera.Position, Mode=TwoWay}"  LookDirection="{Binding Camera.LookDirection, Mode=TwoWay}" UpDirection="{Binding Camera.UpDirection, Mode=TwoWay}" />
-                <!--<PerspectiveCamera x:Name="MainCamera" Position="-200, 0, 0"  LookDirection="1, 0, 0" UpDirection="0,0,-1" />-->
             </HelixToolkit:HelixViewport3D.Camera>
             <HelixToolkit:SunLight/>
             <ModelVisual3D Content="{Binding ModelAR}">
@@ -48,7 +47,6 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <CheckBox Content="Enable SignalR Web API  " IsChecked="{Binding SignalRWebAPI, Mode=TwoWay}" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -62,19 +60,22 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <CheckBox Name="UseLocalWebAPI" Content="Enable local Web API  " IsChecked="{Binding LocalWebAPI, Mode=TwoWay}" Grid.Row="0" Grid.Column="0" />
-                <TextBlock Text="{Binding LocalWebAPIBaseAddress}" Grid.Row="0" Grid.Column="1" />
-                <TextBlock Text="{Binding OcvTranslate.X, StringFormat='OcvTX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="1" />
-                <TextBlock Text="{Binding OcvTranslate.Y, StringFormat='OcvTY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="2" />
-                <TextBlock Text="{Binding OcvTranslate.Z, StringFormat='OcvTZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="3" />
-                <TextBlock Text="{Binding OcvRot.X,       StringFormat='OcvRX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="4" />
-                <TextBlock Text="{Binding OcvRot.Y,       StringFormat='OcvRY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="5" />
-                <TextBlock Text="{Binding OcvRot.Z,       StringFormat='OcvRZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="6" />
-                <TextBlock Text="{Binding IR1}" Grid.Column="1"  Grid.Row="1"/>
-                <TextBlock Text="{Binding IR2}" Grid.Column="1"  Grid.Row="2"/>
-                <TextBlock Text="{Binding IR3}" Grid.Column="1"  Grid.Row="3"/>
-                <TextBlock Text="{Binding IR4}" Grid.Column="1"  Grid.Row="4"/>
+                <CheckBox Content="Enable SignalR Web API  " IsChecked="{Binding SignalRWebAPI, Mode=TwoWay}" />
+                <TextBlock Text="{Binding SignalRStatus}" Grid.Row="0" Grid.Column="1" />
+                <CheckBox Name="UseLocalWebAPI" Content="Enable local Web API  " IsChecked="{Binding LocalWebAPI, Mode=TwoWay}" Grid.Row="1" Grid.Column="0" />
+                <TextBlock Text="{Binding LocalWebAPIBaseAddress}" Grid.Row="1" Grid.Column="1" />
+                <TextBlock Text="{Binding OcvTranslate.X, StringFormat='OcvTX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="2" />
+                <TextBlock Text="{Binding OcvTranslate.Y, StringFormat='OcvTY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="3" />
+                <TextBlock Text="{Binding OcvTranslate.Z, StringFormat='OcvTZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="4" />
+                <TextBlock Text="{Binding OcvRot.X,       StringFormat='OcvRX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="5" />
+                <TextBlock Text="{Binding OcvRot.Y,       StringFormat='OcvRY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="6" />
+                <TextBlock Text="{Binding OcvRot.Z,       StringFormat='OcvRZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="7" />
+                <TextBlock Text="{Binding IR1}" Grid.Column="1"  Grid.Row="2"/>
+                <TextBlock Text="{Binding IR2}" Grid.Column="1"  Grid.Row="3"/>
+                <TextBlock Text="{Binding IR3}" Grid.Column="1"  Grid.Row="4"/>
+                <TextBlock Text="{Binding IR4}" Grid.Column="1"  Grid.Row="5"/>
             </Grid>
             
             <ComboBox ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedModel}" Width="256" HorizontalAlignment="Left" />
