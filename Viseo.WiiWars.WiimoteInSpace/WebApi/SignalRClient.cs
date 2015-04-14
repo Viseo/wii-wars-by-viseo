@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Windows;
 using Viseo.WiiWars.WiimoteInSpace.WebApi.Controllers;
@@ -8,7 +9,7 @@ namespace Viseo.WiiWars.WiimoteInSpace.WebApi
 {
     public class SignalRClient : IDisposable
     {
-        private const string ServerURI = "http://localhost:39638/signalr";
+        private const string ServerURI = "https://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/signalr";
         private const string HubName = "SaberHub";
         public HubConnection Connection { get; set; }
         public IHubProxy HubProxy { get; set; }
@@ -17,7 +18,14 @@ namespace Viseo.WiiWars.WiimoteInSpace.WebApi
 
         public async void ConnectAsync()
         {
+            var writer = new StreamWriter("ClientLog.txt");
+            writer.AutoFlush = true;
+            
             Connection = new HubConnection(ServerURI);
+
+            Connection.TraceLevel = TraceLevels.All;
+            Connection.TraceWriter = writer;
+
             Connection.Closed += Connection_Closed;
             HubProxy = Connection.CreateHubProxy(HubName);
 

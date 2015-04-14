@@ -267,6 +267,7 @@
   <ItemGroup>
     <Content Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
     <None Include="Properties\PublishProfiles\mobile%24viseo-wii-wars-dev-noeu-mobilesrv.pubxml" />
+    <None Include="Properties\PublishProfiles\mobile-viseo-wii-wars-dev-noeu-mobilesrv.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Viseo.WiiWars.Models\Viseo.WiiWars.Models.csproj">
