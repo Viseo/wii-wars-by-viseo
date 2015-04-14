@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-// using Viseo.WiiWars.WiimoteInSpace.Models;
 
 namespace Viseo.WiiWars.Models.Dal
 {

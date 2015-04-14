@@ -61,7 +61,7 @@ namespace Viseo.WiiWars.Models.Dal
             if (saber == null)
                 return false;
 
-            //item.CopyProperties(saber);
+            item.CopyProperties(saber);
             return true;
         }
     }
