@@ -8,7 +8,10 @@ import com.google.android.gms.wearable.WearableListenerService;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
@@ -25,49 +28,40 @@ import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperati
  */
 public class ListenerService extends WearableListenerService {
 
-    private final static String baseAddress = "http://inv010581:9000";
+    private final static String baseAddress = "https://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/";
 
-    private final static String turnOnUrl=baseAddress+"/api/saber/TurnOn/1";
-    private final static String turnOffUrl=baseAddress+"/api/saber/TurnOff/1";
-    private final static String colorRedUrl=baseAddress+"/api/saber/ChangeColorRed/1";
-    private final static String colorBlueUrl=baseAddress+"/api/saber/ChangeColorBlue/1";
-    private final static String colorGreenUrl=baseAddress+"/api/saber/ChangeColorGreen/1";
+    private final static String turnOnUrl=baseAddress+"api/saber/TurnOn/1";
+    private final static String turnOffUrl=baseAddress+"api/saber/TurnOff/1";
+    private final static String colorRedUrl=baseAddress+"api/saber/ChangeColorRed/1";
+    private final static String colorBlueUrl=baseAddress+"api/saber/ChangeColorBlue/1";
+    private final static String colorGreenUrl=baseAddress+"api/saber/ChangeColorGreen/1";
+
+    private final static String apiKey="kAFbTILxKueFrdqAvhsuaaAAgdXLub62";
 
     private MobileServiceClient mClient;
 
     private MobileServiceTable<Saber> saberTable;
 
     private Saber currentSaber;
-/*
+
     @Override
     public void onCreate() {
         super.onCreate();
-        // Create the Mobile Service Client instance, using the provided
-        // Mobile Service URL and key
         try {
 
             mClient = new MobileServiceClient(
-                    "https://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/",
-                    "kAFbTILxKueFrdqAvhsuaaAAgdXLub62",
+                    baseAddress,
+                    apiKey,
                     this);
-
-            saberTable = mClient.getTable(Saber.class);
-
-            List<Saber> list = saberTable.where().field("id").eq(val("1")).execute().get();
-            currentSaber = list.get(0);
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         }
-    }*/
+    }
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         showToast(messageEvent.getPath());
-        //processMessage(messageEvent.getPath());
+        processMessage(messageEvent.getPath());
     }
 
     public void showToast(String message)
@@ -79,64 +73,33 @@ public class ListenerService extends WearableListenerService {
         switch(message)
         {
             case "on":
-                turnOn();
-                //callUrl(turnOnUrl);
+                //turnOn();
+                callUrl(turnOnUrl);
                 break;
             case "off":
-                turnOff();
-                //callUrl(turnOffUrl);
+                //turnOff();
+                callUrl(turnOffUrl);
                 break;
             case "green":
-                //callUrl(colorGreenUrl);
+                callUrl(colorGreenUrl);
                 break;
             case "blue":
-                //callUrl(colorBlueUrl);
+                callUrl(colorBlueUrl);
                 break;
             case "red":
-                //callUrl(colorRedUrl);
+                callUrl(colorRedUrl);
                 break;
         }
     }
 
-    private void turnOn()
-    {
-        currentSaber.setPower(true);
-
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    saberTable.update(currentSaber).get();
-                } catch (final Exception e){
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
-    }
-
-    private void turnOff()
-    {
-        currentSaber.setPower(false);
-
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    saberTable.update(currentSaber).get();
-                } catch (final Exception e){
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
-    }
-
-
     private void callUrl(String url)
     {
+        System.out.println(url);
         try {
             HttpGet httpGet = new HttpGet(url);
+            httpGet.addHeader(BasicScheme.authenticate(
+                    new UsernamePasswordCredentials("", apiKey),
+                    "UTF-8", false));
             DefaultHttpClient httpClient = new DefaultHttpClient();
             httpClient.execute(httpGet);
         } catch (IOException e) {
