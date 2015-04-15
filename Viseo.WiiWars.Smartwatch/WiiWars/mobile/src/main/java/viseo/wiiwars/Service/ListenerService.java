@@ -28,13 +28,15 @@ import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperati
  */
 public class ListenerService extends WearableListenerService {
 
-    private final static String baseAddress = "https://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net";
+    private final static String baseAddress = "https://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/";
 
-    private final static String turnOnUrl=baseAddress+"/api/saber/TurnOn/1";
-    private final static String turnOffUrl=baseAddress+"/api/saber/TurnOff/1";
-    private final static String colorRedUrl=baseAddress+"/api/saber/ChangeColorRed/1";
-    private final static String colorBlueUrl=baseAddress+"/api/saber/ChangeColorBlue/1";
-    private final static String colorGreenUrl=baseAddress+"/api/saber/ChangeColorGreen/1";
+    private final static String turnOnUrl=baseAddress+"api/saber/TurnOn/1";
+    private final static String turnOffUrl=baseAddress+"api/saber/TurnOff/1";
+    private final static String colorRedUrl=baseAddress+"api/saber/ChangeColorRed/1";
+    private final static String colorBlueUrl=baseAddress+"api/saber/ChangeColorBlue/1";
+    private final static String colorGreenUrl=baseAddress+"api/saber/ChangeColorGreen/1";
+
+    private final static String apiKey="kAFbTILxKueFrdqAvhsuaaAAgdXLub62";
 
     private MobileServiceClient mClient;
 
@@ -45,19 +47,12 @@ public class ListenerService extends WearableListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
-        // Create the Mobile Service Client instance, using the provided
-        // Mobile Service URL and key
         try {
 
             mClient = new MobileServiceClient(
-                    "https://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/",
-                    "kAFbTILxKueFrdqAvhsuaaAAgdXLub62",
+                    baseAddress,
+                    apiKey,
                     this);
-
-            //saberTable = mClient.getTable(Saber.class);
-
-            //List<Saber> list = saberTable.where().field("id").eq(val("1")).execute().get();
-            //currentSaber = list.get(0);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -97,48 +92,13 @@ public class ListenerService extends WearableListenerService {
         }
     }
 
-    private void turnOn()
-    {
-        currentSaber.setPower(true);
-
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    saberTable.update(currentSaber).get();
-                } catch (final Exception e){
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
-    }
-
-    private void turnOff()
-    {
-        currentSaber.setPower(false);
-
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    saberTable.update(currentSaber).get();
-                } catch (final Exception e){
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
-    }
-
-
     private void callUrl(String url)
     {
         System.out.println(url);
         try {
             HttpGet httpGet = new HttpGet(url);
             httpGet.addHeader(BasicScheme.authenticate(
-                    new UsernamePasswordCredentials("", "kAFbTILxKueFrdqAvhsuaaAAgdXLub62"),
+                    new UsernamePasswordCredentials("", apiKey),
                     "UTF-8", false));
             DefaultHttpClient httpClient = new DefaultHttpClient();
             httpClient.execute(httpGet);
