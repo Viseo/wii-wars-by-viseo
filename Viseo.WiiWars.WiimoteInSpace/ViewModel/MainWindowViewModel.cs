@@ -431,20 +431,22 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             get { return _localWebAPI; }
             set
             {
-                _localWebAPI = value;
-                OnPropertyChanged();
-
                 if (value)
                 {
                     if (_server == null)
                         _server = new WebApi.WebApiServer();
-                    _server.Start(LocalWebAPIBaseAddress);
+                    if (_server.Start(LocalWebAPIBaseAddress))
+                    {
+                        _localWebAPI = true;
+                    }
                 }
                 else
                 {
                     _server.Dispose();
                     _server = null;
+                    _localWebAPI = false;
                 }
+                OnPropertyChanged();
             }
         }
 
