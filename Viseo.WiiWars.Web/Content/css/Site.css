@@ -1,0 +1,160 @@
+﻿body {
+    padding-bottom: 20px;
+    background-color: gainsboro;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.navbar-default {
+    background-color: rgb(60,69,79) !important;
+}
+
+h1 {
+    color: rgb(60,69,79) !important;
+}
+
+.navbar-brand {
+    color: lightgrey !important;
+}
+
+.selectable {
+    cursor : pointer !important;
+}
+
+.panel-heading {
+    height: 110px;
+}
+
+.loader {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  border: 4px solid #FBFBFB;
+  top: 50%;
+  animation: loader 4s infinite ease;
+}
+
+.loader-inner {
+  vertical-align: top;
+  display: inline-block;
+  width: 100%;
+  background-color: #FBFBFB;
+  animation: loader-inner 4s infinite ease-in;
+
+}
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  
+  25% {
+    transform: rotate(180deg);
+  }
+  
+  50% {
+    transform: rotate(180deg);
+  }
+  
+  75% {
+    transform: rotate(360deg);
+  }
+  
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader-inner {
+  0% {
+    height: 100%;
+  }
+  
+  25% {
+    height: 100%;
+  }
+  
+  50% {
+    height: 0%;
+  }
+  
+  75% {
+    height: 0%;
+  }
+  
+  100% {
+    height: 100%;
+  }
+}
+
+.panel-StorageAccounts {
+    border-color: lightslategray;
+}
+
+.panel-StorageAccounts .panel-heading {
+    border-color: lightslategray;
+    color: #fff;
+    background-color: lightslategray;
+}
+
+.panel-StorageAccounts a {
+    color: lightslategray;
+}
+
+.panel-StorageAccounts a:hover {
+    color: lightslategray;
+}
+
+.panel-VisualStudioOnlines {
+    border-color: rgb(104,33,122);
+}
+
+.panel-VisualStudioOnlines .panel-heading {
+    border-color: rgb(104,33,122);
+    color: #fff;
+    background-color: rgb(104,33,122);
+}
+
+.panel-VisualStudioOnlines a {
+    color: rgb(104,33,122);
+}
+
+.panel-VisualStudioOnlines a:hover {
+    color: rgb(104,33,122);
+}
+
+.dashboard-Websites-Color {
+    color: rgb(66, 139, 202);
+}
+
+.dashboard-VirtualMachines-Color {
+    color: rgb(92,184,92);
+}
+
+.dashboard-CloudServices-Color {
+    color: rgb(217,83,79);
+}
+
+.dashboard-Databases-Color {
+    color: rgb(240,173,78);
+}
+
+.dashboard-StorageAccounts-Color {
+    color: rgb(119,136,153);
+}
+
+.dashboard-VisualStudioOnlines-Color {
+    color: rgb(104,33,122);
+}
