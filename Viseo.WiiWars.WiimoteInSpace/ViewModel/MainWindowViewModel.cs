@@ -498,7 +498,32 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                 OnPropertyChanged();
             }
         }
-        
+
+        private bool _enableEventHub;
+
+        public bool EnableEventHub
+        {
+            get { return _enableEventHub; }
+            set
+            {
+                _enableEventHub = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _eventHubMsgStatus;
+
+        public string EventHubMsgStatus
+        {
+            get { return _eventHubMsgStatus; }
+            set
+            {
+                _eventHubMsgStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         private WebApi.SignalRClient _client;
         private WebApi.WebApiServer _server;
         private SaberRepository _saberRepository;
@@ -515,6 +540,10 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
 
             _eventHubSender = new EventHubSender(ConfigurationManager.AppSettings["EventHub.Name"]);
+            _eventHubSender.PropertyChanged += (sender, e) =>
+            {
+                EventHubMsgStatus = _eventHubSender.MsgStatus;
+            };
 
             Camera = new CameraViewModel();
 
@@ -721,8 +750,8 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                                              rvecIdxer[2] * (180 / Math.PI));
                     OnPropertyChanged("OcvRot");
 
-                    _eventHubSender.Send(new { Translate = _ocvTranslate, Rotation = _ocvRot, ButtonState = e.WiimoteState.ButtonState });
-                    //EventHubSender.SendEventsToEventHub(new { Translate = _ocvTranslate, Rotation = _ocvRot, ButtonState = e.WiimoteState.ButtonState });
+                    if (EnableEventHub)
+                        _eventHubSender.Send(new { Translate = _ocvTranslate, Rotation = _ocvRot, ButtonState = e.WiimoteState.ButtonState });
                     
                     //Transformation Matrix computation
                     Mat R = new Mat(3, 3, MatType.CV_64F);

@@ -61,21 +61,24 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <CheckBox Content="Enable SignalR Web API  " IsChecked="{Binding SignalRWebAPI, Mode=TwoWay}" />
-                <TextBlock Text="{Binding SignalRStatus}" Grid.Row="0" Grid.Column="1" />
-                <CheckBox Name="UseLocalWebAPI" Content="Enable local Web API  " IsChecked="{Binding LocalWebAPI, Mode=TwoWay}" Grid.Row="1" Grid.Column="0" />
-                <TextBlock Text="{Binding LocalWebAPIBaseAddress}" Grid.Row="1" Grid.Column="1" />
-                <TextBlock Text="{Binding OcvTranslate.X, StringFormat='OcvTX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="2" />
-                <TextBlock Text="{Binding OcvTranslate.Y, StringFormat='OcvTY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="3" />
-                <TextBlock Text="{Binding OcvTranslate.Z, StringFormat='OcvTZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="4" />
-                <TextBlock Text="{Binding OcvRot.X,       StringFormat='OcvRX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="5" />
-                <TextBlock Text="{Binding OcvRot.Y,       StringFormat='OcvRY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="6" />
-                <TextBlock Text="{Binding OcvRot.Z,       StringFormat='OcvRZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="7" />
-                <TextBlock Text="{Binding IR1}" Grid.Column="1"  Grid.Row="2"/>
-                <TextBlock Text="{Binding IR2}" Grid.Column="1"  Grid.Row="3"/>
-                <TextBlock Text="{Binding IR3}" Grid.Column="1"  Grid.Row="4"/>
-                <TextBlock Text="{Binding IR4}" Grid.Column="1"  Grid.Row="5"/>
+                <CheckBox Content="Enable EventHub  " IsChecked="{Binding EnableEventHub, Mode=TwoWay}" />
+                <TextBlock Text="{Binding EventHubMsgStatus}" Grid.Row="0" Grid.Column="1" />
+                <CheckBox Content="Enable SignalR Web API  " IsChecked="{Binding SignalRWebAPI, Mode=TwoWay}" Grid.Row="1" Grid.Column="0" />
+                <TextBlock Text="{Binding SignalRStatus}" Grid.Row="1" Grid.Column="1" />
+                <CheckBox Name="UseLocalWebAPI" Content="Enable local Web API  " IsChecked="{Binding LocalWebAPI, Mode=TwoWay}" Grid.Row="2" Grid.Column="0" />
+                <TextBlock Text="{Binding LocalWebAPIBaseAddress}" Grid.Row="2" Grid.Column="1" />
+                <TextBlock Text="{Binding OcvTranslate.X, StringFormat='OcvTX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="3" />
+                <TextBlock Text="{Binding OcvTranslate.Y, StringFormat='OcvTY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="4" />
+                <TextBlock Text="{Binding OcvTranslate.Z, StringFormat='OcvTZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="5" />
+                <TextBlock Text="{Binding OcvRot.X,       StringFormat='OcvRX: {0:0.0000}'}" Grid.Column="0"  Grid.Row="6" />
+                <TextBlock Text="{Binding OcvRot.Y,       StringFormat='OcvRY: {0:0.0000}'}" Grid.Column="0"  Grid.Row="7" />
+                <TextBlock Text="{Binding OcvRot.Z,       StringFormat='OcvRZ: {0:0.0000}'}" Grid.Column="0"  Grid.Row="8" />
+                <TextBlock Text="{Binding IR1}" Grid.Column="1"  Grid.Row="3"/>
+                <TextBlock Text="{Binding IR2}" Grid.Column="1"  Grid.Row="4"/>
+                <TextBlock Text="{Binding IR3}" Grid.Column="1"  Grid.Row="5"/>
+                <TextBlock Text="{Binding IR4}" Grid.Column="1"  Grid.Row="6"/>
             </Grid>
             
             <ComboBox ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedModel}" Width="256" HorizontalAlignment="Left" />

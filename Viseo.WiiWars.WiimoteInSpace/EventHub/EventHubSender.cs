@@ -6,13 +6,21 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
+using Viseo.WiiWars.WiimoteInSpace;
 
 namespace Viseo.WiiWars.EventHub
 {
-    public class EventHubSender
+    public class EventHubSender : NotifierBase
     {
         private readonly EventHubClient Client;
         private List<Task> SendingTasks;
+        private int _totalMsg;
+        private int _msgSent;
+
+        public string MsgStatus
+        {
+            get { return String.Format("{0} / {1}", _msgSent, _totalMsg); }
+        }
 
         public EventHubSender(string eventHubName)
         {
@@ -44,7 +52,12 @@ namespace Viseo.WiiWars.EventHub
                 data.Properties.Add("Type", "Telemetry_" + DateTime.Now.ToLongTimeString());
 
                 // Send the metric to Event Hub
-                SendingTasks.Add(Client.SendAsync(data));
+                _totalMsg++;
+                SendingTasks.Add(Client.SendAsync(data).ContinueWith((prevTask) =>
+                {
+                    _msgSent++;
+                    OnPropertyChanged("MsgStatus");
+                }));
             }
         }
         
