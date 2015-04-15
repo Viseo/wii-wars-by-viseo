@@ -19,6 +19,8 @@ using AForge.Video;
 using System.Drawing;
 using Viseo.WiiWars.WiimoteInSpace.WebApi.Dal;
 using System.Net;
+using Viseo.WiiWars.EventHub;
+using System.Configuration;
 
 namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
 {
@@ -458,10 +460,75 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             }
         }
 
+        private bool _signalRWebAPI;
 
+        public bool SignalRWebAPI
+        {
+            get { return _signalRWebAPI; }
+            set
+            {
+                _signalRWebAPI = value;
+                OnPropertyChanged();
+
+                if (value)
+                {
+                    SignalRStatus = "Connecting...";
+                    if (_client == null)
+                        _client = new WebApi.SignalRClient();
+                    Task.Factory.StartNew(() => _client.Connect())
+                        .ContinueWith((prevTask) => { SignalRStatus = "Ready"; });
+                }
+                else
+                {
+                    _client.Dispose();
+                    _client = null;
+                    SignalRStatus = "Disconnected";
+                }
+            }
+        }
+
+        private string _signalRStatus;
+
+        public string SignalRStatus
+        {
+            get { return _signalRStatus; }
+            set
+            {
+                _signalRStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _enableEventHub;
+
+        public bool EnableEventHub
+        {
+            get { return _enableEventHub; }
+            set
+            {
+                _enableEventHub = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _eventHubMsgStatus;
+
+        public string EventHubMsgStatus
+        {
+            get { return _eventHubMsgStatus; }
+            set
+            {
+                _eventHubMsgStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private WebApi.SignalRClient _client;
         private WebApi.WebApiServer _server;
         private SaberRepository _saberRepository;
         private WiimoteButtonsEvents _wiimoteButtonsEvent = new WiimoteButtonsEvents();
+        private EventHubSender _eventHubSender;
 
         public MainWindowViewModel()
         {
@@ -471,6 +538,12 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             dispatcher = Dispatcher.CurrentDispatcher;
             _synchronizationContext = SynchronizationContext.Current;
             VideoButtonImage = Application.Current.Resources["StartImage"] as BitmapImage;
+
+            _eventHubSender = new EventHubSender(ConfigurationManager.AppSettings["EventHub.Name"]);
+            _eventHubSender.PropertyChanged += (sender, e) =>
+            {
+                EventHubMsgStatus = _eventHubSender.MsgStatus;
+            };
 
             Camera = new CameraViewModel();
 
@@ -677,6 +750,9 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
                                              rvecIdxer[2] * (180 / Math.PI));
                     OnPropertyChanged("OcvRot");
 
+                    if (EnableEventHub)
+                        _eventHubSender.Send(new { Translate = _ocvTranslate, Rotation = _ocvRot, ButtonState = e.WiimoteState.ButtonState });
+                    
                     //Transformation Matrix computation
                     Mat R = new Mat(3, 3, MatType.CV_64F);
                     Cv2.Rodrigues(rvec, R);
@@ -798,6 +874,11 @@ namespace Viseo.WiiWars.WiimoteInSpace.ViewModel
             CloseVideoSource();
             if (_server != null)
                 _server.Dispose();
+            if (_client != null)
+                _client.Dispose();
+
+            _eventHubSender.Close();
+
             GC.SuppressFinalize(this);
         }
     }

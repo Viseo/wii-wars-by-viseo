@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "WiiWars Game by VISEO";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+<div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Please press a button to interract with the lazer Saber.</h1>
+        </div>
+    </div>
+    @*<div class="row">
+            <div class="col-md-12">
+                @Html.Partial("~/Views/Home/_Summary.cshtml")
+            </div>
+        </div>*@
+    <div class="row">
+        <div class="col-md-6">
+            <a href="http://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/api/Saber/TurnOn/1"> Turn On Saber 1</a>
+        </div>
+        <div class="col-md-6">
+            <a href="http://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/api/Saber/TurnOff/1"> Turn Off Saber 1</a>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <a href="http://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/api/Saber/ChangeColorGreen/1"> Change Color Green On Saber 1</a>
+
+        </div>
+        <div class="col-md-6">
+            <a href="http://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/api/Saber/ChangeColorRed/1"> Change Color Red On Saber 1</a>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <a href="http://viseo-wii-wars-dev-noeu-mobilesrv.azure-mobile.net/api/Saber/ChangeColorBlue/1"> Change Color Blue On Saber 1</a>
+
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+</div>
