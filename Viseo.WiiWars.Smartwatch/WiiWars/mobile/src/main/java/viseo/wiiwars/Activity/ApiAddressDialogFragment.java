@@ -56,9 +56,8 @@ public class ApiAddressDialogFragment extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.change_address_dialog, null));
-
         View view = inflater.inflate(R.layout.change_address_dialog, null);
+        builder.setView(view);
 
         tAddress = (TextView) view.findViewById(R.id.tIpAddress);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this.getActivity());

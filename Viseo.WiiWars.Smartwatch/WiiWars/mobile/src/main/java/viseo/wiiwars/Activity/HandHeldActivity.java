@@ -89,8 +89,8 @@ public class HandHeldActivity extends ActionBarActivity implements ApiAddressDia
 
         lockScreenOrientation();
 
-        WebServiceScore ws = new WebServiceScore(this);
-        ws.execute();
+        //WebServiceScore ws = new WebServiceScore(this);
+        //ws.execute();
     }
 
     @Override
@@ -211,17 +211,17 @@ public class HandHeldActivity extends ActionBarActivity implements ApiAddressDia
         {
             case "red":
                 this.color="red";
-                callUrl(colorRedUrl);
+                //callUrl(colorRedUrl);
                 break;
 
             case "blue":
                 this.color="blue";
-                callUrl(colorBlueUrl);
+                //callUrl(colorBlueUrl);
                 break;
 
             case "green":
                 this.color="green";
-                callUrl(colorGreenUrl);
+                //callUrl(colorGreenUrl);
                 break;
 
             case "simple":
@@ -238,13 +238,13 @@ public class HandHeldActivity extends ActionBarActivity implements ApiAddressDia
 
             case "on":
                 this.power=true;
-                callUrl(turnOnUrl);
+                //callUrl(turnOnUrl);
                 //playSound(R.raw.lightsaberin);
                 break;
 
             case "off":
                 this.power=false;
-                callUrl(turnOffUrl);
+                //callUrl(turnOffUrl);
                 //playSound(R.raw.lightsaberout);
                 break;
         }
